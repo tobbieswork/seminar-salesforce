@@ -1,5 +1,5 @@
 public with sharing class CH1_BookingRecordTriggerHandler {
-    public static Boolean cH1_BookingRecordsCheck(List<Booking__c> bookingList) {
+    public static void cH1_BookingRecordsCheck(List<Booking__c> bookingList) {
 		
         //Store Id seminar and the number of bookings for this seminar
         Map<Id, Integer> countBookings = new Map<Id, Integer>();
@@ -27,11 +27,12 @@ public with sharing class CH1_BookingRecordTriggerHandler {
             Integer quantity = Integer.valueOf(serminarMap.get(serminarId).Quantity__c);
             
             if(numberOfBooked + numberOfBooking > quantity){
-                return false;
+                bookingList[0].addError(
+                    'Error:The amount of insertion is more than available slot! Available: ' 
+                    + String.valueOf(quantity - numberOfBooked)
+                    + '. Bookings: ' + String.valueOf(numberOfBooking)
+                );
             }
         }
-        return true;
-        
-        
     }
 }
