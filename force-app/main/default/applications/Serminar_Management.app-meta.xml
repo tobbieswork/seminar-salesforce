@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#24BF8E</headerColor>
+        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+    </brand>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <label>Serminar Management</label>
+    <navType>Standard</navType>
+    <tabs>Serminar__c</tabs>
+    <tabs>standard-Contact</tabs>
+    <tabs>Booking__c</tabs>
+    <tabs>Promotion_Code__c</tabs>
+    <tabs>Contact_Card__c</tabs>
+    <tabs>Payment__c</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Serminar_Management_UtilityBar</utilityBar>
+</CustomApplication>
