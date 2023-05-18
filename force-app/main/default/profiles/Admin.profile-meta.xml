@@ -6,15 +6,11 @@
         <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
-        <apexClass>CH1_BookingRecordTriggerHandler</apexClass>
+        <apexClass>CH1_BookingTriggerHandler</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>CH1_BookingRecordTriggerTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DeleteAllRecords</apexClass>
+        <apexClass>CH1_BookingTriggerHandlerTest</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <custom>false</custom>
@@ -229,6 +225,10 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Promotion_Code__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Serminar_Management</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <tabVisibilities>

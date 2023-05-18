@@ -15,8 +15,6 @@
     <tabs>standard-Contact</tabs>
     <tabs>Booking__c</tabs>
     <tabs>Promotion_Code__c</tabs>
-    <tabs>Contact_Card__c</tabs>
-    <tabs>Payment__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Serminar_Management_UtilityBar</utilityBar>
 </CustomApplication>
