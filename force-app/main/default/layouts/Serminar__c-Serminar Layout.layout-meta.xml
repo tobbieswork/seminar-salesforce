@@ -83,6 +83,11 @@
     </layoutSections>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Status__c</fields>
+        <relatedList>Booking__c.Serminar__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
         <relatedList>Section__c.Serminar__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
