@@ -1,0 +1,50 @@
+<template>
+    <div class="container">
+        <div class="search__bar">
+            <form name="searchForm" id="searchForm" onsubmit={handleSubmit}>
+                <label for="search"></label>
+                <input type="text" value={searchValue} onblur={handleOnBlur} onchange={handleChangeSearchValue} onkeypress={handleOnEnter} name="search" id="search-field" placeholder="Search...">
+                <button class="slds-button slds-button_brand" onclick={handleSearch} type="button">Search</button>
+                <div class="search__option">
+
+                    <h1>Sort</h1>
+
+                    <input name="orderSort" id="asc" type="radio" value="asc" onchange={handleChangeOrder} checked>
+                    <label for="asc">ASC</label>
+                    <input name="orderSort" id="desc" type="radio" value="desc" onchange={handleChangeOrder}>
+                    <label for="asc">DESC</label>
+
+                    <lightning-combobox
+                        class="field-options"
+                        name="fields"
+                        variant="label-hidden"
+                        value={field}
+                        placeholder="Select Field"
+                        options={fieldOptions}
+                        onchange={handleChangeField} >
+                    </lightning-combobox>
+                </div>
+            </form>
+        </div>
+        <div class="search__result">
+            <template lwc:if={serminars}>
+                <template for:each={serminars} for:item="serminar">
+                    <div key={serminar.id} class="search__item">
+                        <div class="img__container">
+                            <img src={serminar.Image__c} alt="serminar image">
+                        </div>
+                        <div class="serminar__container">
+                            <h1 class="serminar__name slds-text-heading_large">{serminar.Name}</h1>
+                            <p class="serminar__name">{serminar.Start_Date__c}</p>
+                            <lightning-formatted-rich-text class="slds-text-heading_small" value={serminar.Description__c}></lightning-formatted-rich-text>
+                            <a class="serminar__link">Detail</a>
+                            <template lwc:if={serminar.Price__c}>
+                                <p class="serminar__price"><lightning-formatted-number value={serminar.Price__c}></lightning-formatted-number>đ</p>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>
