@@ -1,33 +1,28 @@
 import { LightningElement, track, wire } from 'lwc';
 import getSerminarList from '@salesforce/apex/CH3_SerminarController.getSerminarList';
-
-
+import getAllPublicSerminar from '@salesforce/apex/CH3_SerminarController.getAllPublicSerminar';
 export default class Ch3_SerminarDetail extends LightningElement {
+    @track searchValue = null;
+    @track serminars;
     @track field = 'name';
     @track sortOrder = 'asc';
     @track fromDate = '';
     @track toDate = '';
     @track fromPrice = '';
     @track toPrice = '';
-    @track error;
-    @track tempData = [];
-    @track searchValue = null;
-    @track serminars;
+    error;
+    tempData;
 
-    @wire(getSerminarList, {keySearch: '$searchValue'})
-    querySerminars({error, data}) {
-        if(data) {
-            this.tempData = data;
-            this.tempData = this.sortSerminars(this.tempData, this.sortOrder, this.field);
-            // this.formatCurrency(this.tempData);
+    @wire(getAllPublicSerminar)
+    allSerminar({ error, data}){
+        if (data) {
+            this.serminars = data;
             this.error = undefined;
-        } else if(error) {
+        } else if (error) {
             this.error = error;
-            this.tempData = undefined;
-            console.log('error')
+            this.serminars = undefined;
         }
     }
-
     
     get orderOptions() {
         return [
@@ -47,15 +42,14 @@ export default class Ch3_SerminarDetail extends LightningElement {
     sortSerminars(data, order, field){
         if(data.length > 1){
             const serminarsSorted = [...data];
-            console.log(field, order);
             let isAsc;
-    
+
             if (order === 'asc'){
                 isAsc = 1;
             }else{
                 isAsc = -1;
             }
-    
+
             switch (field) {
                 case 'name':
                     serminarsSorted.sort((a,b) => {
@@ -79,30 +73,38 @@ export default class Ch3_SerminarDetail extends LightningElement {
                 default:
                     break;
             }
+
             return serminarsSorted;
         }
     }
 
-    // formatCurrency(data){
-    //     if(data[0]){
-    //         for(const d of data){
-    //             if(d.Price__c){
-    //                 let price = String(d.Price__c);
-    //                 let formatedPrice = [];
-    //                 while(price.length > 3){
-    //                     formatedPrice.unshift(price.slice(-3));
-    //                     price = price.slice(0,-3);
-    //                 }
-    //                 formatedPrice.unshift(price);
-    //                 d.Price__c = formatedPrice.join('.') + 'đ';
-    //             }
-    //         }
-    //     }
-    // }
-
+    findSerminar(){
+        getSerminarList({ searchKey : this.searchValue})
+            .then((data) => {
+                this.tempData = data;
+                this.tempData = this.sortSerminars(this.tempData, this.sortOrder, this.field);
+                this.serminars = this.tempData;
+                this.error = undefined;
+            })
+            .catch((error) => {
+                this.error = error;
+                this.tempData = undefined;
+            });
+    }
     
     handleChangeSearchValue(e) {
         this.searchValue = e.target.value;
+    }
+
+    handleSearch() {
+        this.findSerminar();
+    }
+    
+    handleOnEnter(e){
+        if(e.keyCode === 13){
+            this.searchValue = e.target.value;
+            this.findSerminar();
+        }
     }
     
     handleChangeOrder(e) {
@@ -113,21 +115,6 @@ export default class Ch3_SerminarDetail extends LightningElement {
     handleChangeField(e) {
         this.field = e.target.value;
         this.serminars = this.sortSerminars(this.serminars, this.sortOrder, this.field);
-    }
-
-    handleOnBlur(e){
-        this.searchValue = e.target.value;
-    }
-
-    handleSearch() {
-        this.serminars = this.tempData;
-    }
-    
-    handleOnEnter(e){
-        if(e.keyCode === 13){
-            this.searchValue = e.target.value;
-            this.serminars = this.tempData;
-        }
     }
 
     handleSubmit(e){

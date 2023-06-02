@@ -3,7 +3,7 @@
         <div class="search__bar">
             <form name="searchForm" id="searchForm" onsubmit={handleSubmit}>
                 <label for="search"></label>
-                <input type="text" value={searchValue} onblur={handleOnBlur} onchange={handleChangeSearchValue} onkeypress={handleOnEnter} name="search" id="search-field" placeholder="Search...">
+                <input type="text" value={searchValue} onchange={handleChangeSearchValue} onkeypress={handleOnEnter} name="search" id="search-field" placeholder="Search...">
                 <button class="slds-button slds-button_brand" onclick={handleSearch} type="button">Search</button>
                 <div class="search__option">
 
@@ -35,7 +35,6 @@
                         </div>
                         <div class="serminar__container">
                             <h1 class="serminar__name slds-text-heading_large">{serminar.Name}</h1>
-                            <p class="serminar__name">{serminar.Start_Date__c}</p>
                             <lightning-formatted-rich-text class="slds-text-heading_small" value={serminar.Description__c}></lightning-formatted-rich-text>
                             <a class="serminar__link">Detail</a>
                             <template lwc:if={serminar.Price__c}>

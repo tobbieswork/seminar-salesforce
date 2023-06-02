@@ -1,6 +1,6 @@
 public with sharing class CH3_SerminarController {
-    @AuraEnabled(cacheable=true)
-    public static List<Serminar__c> getSerminarList(String keySearch) {
+    @AuraEnabled(cacheable=false)
+    public static List<Serminar__c> getSerminarList(String searchKey) {
 
         // FIND {Sa*} IN ALL FIELDS 
         // RETURNING Serminar__c
@@ -9,7 +9,15 @@ public with sharing class CH3_SerminarController {
         // AND Price__c < 10000000 AND Start_Date__c > 2023-06-21 
         // AND Start_Date__c < 2023-06-23) ORDER BY Name DESC)
 
-        keySearch = keySearch + '*';
+        if (searchKey == ''){
+            return [
+                SELECT Id, Name, Description__c, Price__c, Start_Date__c, Image__c 
+                FROM Serminar__c  
+                WHERE Is_Public__c = 'True'
+            ];
+        }
+
+        searchKey = searchKey + '*';
 
         // String optionalFilter = '';
         // optionalFilter = fromDate == '' ? optionalFilter : optionalFilter + ' AND' + fromDate;
@@ -17,14 +25,14 @@ public with sharing class CH3_SerminarController {
         // optionalFilter = fromPrice == '' ? optionalFilter : optionalFilter + ' AND '  + fromPrice;
         // optionalFilter = toPrice == '' ? optionalFilter : optionalFilter + ' AND '  + toPrice;
 
-        // String queryStatement = 'FIND \'' + keySearch
+        // String queryStatement = 'FIND \'' + searchKey
         // + '\' IN ALL FIELDS RETURNING Serminar__c(Id, Name, Description__c, Price__c, Start_Date__c '
         // +' WHERE (isPublic__c = \'True\' ' + optionalFilter + ')'
         // +' ORDER BY ' + fieldSort + ' ' + order + ')';
 
         try {
             return [
-                FIND :keySearch 
+                FIND :searchKey 
                 IN ALL FIELDS 
                 RETURNING Serminar__c(Id, Name, Description__c, Price__c, Start_Date__c, Image__c WHERE Is_Public__c = 'True')
             ][0];
@@ -32,4 +40,19 @@ public with sharing class CH3_SerminarController {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Serminar__c> getAllPublicSerminar(){
+        try {
+            return [
+                SELECT Id, Name, Description__c, Price__c, Start_Date__c, Image__c 
+                FROM Serminar__c  
+                WHERE Is_Public__c = 'True'
+                ORDER BY Name ASC
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
 }
