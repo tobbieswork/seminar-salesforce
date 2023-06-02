@@ -22,7 +22,6 @@ public class CH2_ContactCardTriggerHandler {
                     nextIndex = autoNum + 1;
                 }
             }
-            
         }
         
         for(Contact_Card__c ctcard : listCtCard){

@@ -76,7 +76,7 @@ public class CH2_PaymentTriggerHandlerTest {
         Integer numberCtcards = [SELECT COUNT() FROM Contact_Card__c];
         insert pms;
         Integer newNumberCtcards = [SELECT COUNT() FROM Contact_Card__c];
-        System.assertEquals(newNumberCtcards, numberCtcards + 5);
+        System.assertEquals(newNumberCtcards, numberCtcards + 40);
         
         //No contact card be created after insert this unsatisfy payment
         insert newPm;

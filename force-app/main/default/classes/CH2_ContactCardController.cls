@@ -1,6 +1,6 @@
 public with sharing class CH2_ContactCardController {
+    /*
     private ApexPages.StandardController standardController;
-
     public CH2_ContactCardController(ApexPages.StandardController controller) {
         standardController = controller;
 
@@ -10,7 +10,5 @@ public with sharing class CH2_ContactCardController {
 
     public Contact_Card__c contactCard { get; set; }
     public String avatar { get; set; }
-
-	
-    
+	*/
 }

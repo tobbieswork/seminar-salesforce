@@ -1,4 +1,4 @@
-<apex:page showHeader="false" standardStylesheets="false" docType="html-5.0" standardController="Contact_Card__c">
+<apex:page showHeader="false" applyHtmlTag="true" standardStylesheets="false" standardController="Contact_Card__c" applyBodyTag="false" renderAs="pdf" contentType="text/html;charset=UTF-8">
 	<html lang="en">
     	<head>
             <meta charset="utf-8"/>
@@ -43,13 +43,13 @@
                 
             </style>
         </head>
-        <body>
+        <body style="font-family: Arial Unicode MS;">
             <div class="container slds-scope slds-grid">
                 <div class="contact-card slds-align-middle">
                     <div class="slds-grid slds-wrap">
                         <div class="slds-col slds-align-middle slds-size--4-of-12 slds-small-size--1-of-1 slds-medium-size--3-of-12">
                             <div class="contact__avatar">
-                                <img class="avatar" src="{!Contact_Card__c.Contact__r.Avatar__c}" alt="avatar"/>
+                                <img class="avatar" src="{!Contact_Card__c.Contact__r.Avatar__c}" alt="avatar" style="float:left;height:120px;min-width:120px;"/>
                             </div>
                         </div>
                         <div class="contact__info slds-col slds-align-middle slds-size--8-of-1 slds-small-size--1-of-1 slds-medium-size--9-of-12">
