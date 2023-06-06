@@ -1,0 +1,81 @@
+main{
+    padding: 0 15% 100px;
+}
+
+h1{
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+h2{
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.serminar {
+    display: flex;
+}
+
+.serminar .avatar {
+    height: 300px;
+    min-width: 300px;
+    object-fit: cover;
+}
+
+.serminar .info {
+    position: relative;
+    width: 100%;
+    padding: 5px 20px;
+    background-color: #9bd7ff;
+}
+
+.info .serminar-price{
+    font-weight: 700;
+    position: absolute;
+    bottom: 5px;
+    right: 20px;
+}
+
+.sections{
+    margin-top: 20px;
+}
+
+.section-item{
+    margin-bottom: 10px;
+}
+
+.section-name{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    background: rgb(80, 200, 255);
+}
+
+.section-name span {
+    margin-right: 10px;
+}
+
+.section-description {
+    min-height: 200px;
+    padding: 30px 100px;
+    display: grid;
+    place-items: center;
+    background-color: #9bd7ff;
+}
+
+.toggle-btn {
+    display: flex;
+    justify-content: center;
+}
+
+.toggle-btn > p {
+    cursor: pointer;
+    padding: 8px 16px 6px;
+    border: solid 1px;
+}
+
+.navigation {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}

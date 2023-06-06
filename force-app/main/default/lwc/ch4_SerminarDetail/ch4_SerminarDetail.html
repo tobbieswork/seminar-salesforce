@@ -1,0 +1,84 @@
+<template>
+    <!-- <div class="serminar-info">
+        <div class="img-container">
+            <img src={serminar.Image__c} alt="serminar image">
+        </div>
+        <div class="serminar-container">
+            <h1 class="serminar-name slds-text-heading_large">{serminar.Name}</h1>
+            <lightning-formatted-rich-text class="slds-text-heading_small" value={serminar.Description__c}></lightning-formatted-rich-text>
+            <a class="serminar-link">Detail</a>
+            <template lwc:if={serminar.Price__c}>
+                <p class="serminar-price"><lightning-formatted-number value={serminar.Price__c}></lightning-formatted-number>đ</p>
+            </template>
+        </div>
+    </div>
+    <p onclick={handleCallUi}>Serminar Detail</p>
+    <template lwc:if={serminarId}>
+        <p>{serminarId}</p>
+    </template>
+    <div onclick={handleBackHome}>
+        <p>Home</p>
+    </div>
+
+    
+
+    <p>{serminarInfo.Name}</p>
+    <p>{serminarInfo.Name}</p>
+    <p>{serminarInfo.Image__c}</p>
+    <p>{serminarInfo.Description__c}</p>
+    <p>{serminarInfo.Price__c}</p>
+    <template lwc:if={serminarInfo}>
+        <p>{serminarInfo.Name}</p>
+        <p>{serminarInfo.Description__c}</p>
+    </template> -->
+
+    <main>
+        <template lwc:if={serminarInfo}>
+            <div class="serminar">
+                <img class="avatar" src={serminarInfo.Image__c} alt="">
+                <div class="info">
+                    <h1 class="serminar-name">{serminarInfo.Name}</h1>
+                    <p class="serminar-description">
+                        <lightning-formatted-rich-text class="slds-text-heading_small" value={serminarInfo.Description__c}></lightning-formatted-rich-text>
+                    </p>
+
+                    <p class="serminar-price">
+                        <lightning-formatted-number value={serminarInfo.Price__c}></lightning-formatted-number>đ
+                    </p>
+                </div>  
+            </div>
+            <div class="sections">
+                <template lwc:if={shownSections}>
+                    <template for:each={shownSections} for:item="section" >
+                        <div key={section.Id} class="section-item">
+                            <div class="section-name">
+                                <span>V</span><h2>{section.Name}</h2>
+                            </div>
+                            <div class="section-description">
+                                <p>
+                                    <lightning-formatted-rich-text class="slds-text-heading_small" value={section.Description__c}></lightning-formatted-rich-text>
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template if:true={isExpandable}>
+                    <template lwc:if={isShow}>
+                        <div class="toggle-btn" onclick={handleToggleExpandation}>
+                            <p>Show less</p>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <div class="toggle-btn" onclick={handleToggleExpandation}>
+                            <p>Show all</p>
+                        </div>
+                    </template>
+                </template>
+            </div>
+            <div class="navigation">
+                <button onclick={handleReturnHomepage} class="slds-button slds-button_neutral" aria-disabled="false" type="button">Back to Serminars</button>
+                <button onclick={handle} class="slds-button slds-button_brand" aria-disabled="false" type="button">Register</button>
+            </div>
+        </template>
+    </main>
+</template>

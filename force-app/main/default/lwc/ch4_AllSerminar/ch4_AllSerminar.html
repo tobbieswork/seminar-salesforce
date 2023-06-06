@@ -1,0 +1,96 @@
+<template>
+    <div class="container">
+        <div class="search-bar">
+            <form name="searchForm" id="searchForm" onsubmit={handleSubmit}>
+                <input type="text" value={searchValue} onchange={handleChangeSearchValue} onkeypress={handleOnEnter} name="search" id="search-field" placeholder="Search...">
+                
+                    <div class="search-filter">
+                    <p class="slds-text-heading_small"><b>Start date</b></p>
+                    <div class="filter-field filter-date">
+                        <label for="date-from">From date</label>
+                        <lightning-input class="filter-input" onchange={handleChangeDateFrom} value={dateRangeFrom} type="date" name="date-from" variant="label-hidden" placeholder="input date..."></lightning-input>
+                        <label for="date-to">To date</label>
+                        <lightning-input class="filter-input" onchange={handleChangeDateTo} value={dateRangeTo} type="date" name="date-to" variant="label-hidden" placeholder="input date..."></lightning-input>
+                    </div>
+                    <p class="slds-text-heading_small"><b>Price</b></p>
+                    <div class="filter-field filter-price">
+                        <label for="price-from">From price</label>
+                        <lightning-input class="filter-input slds-text-align_center" onchange={handleChangePriceFrom} value={priceRangeFrom} type="number" name="price-from" variant="label-hidden" placeholder="input price..."></lightning-input>
+                        <label for="price-to">To price</label>
+                        <lightning-input class="filter-input" onchange={handleChangePriceTo} value={priceRangeTo} type="number" name="price-to" variant="label-hidden" placeholder="input price..."></lightning-input>
+                    </div>
+                    <div class="filter-btn">
+                        <button onclick={handleClearFilter} class="slds-button slds-button_neutral" aria-disabled="false" title="Non-primary action" type="button">Clear search</button>
+                        <button onclick={handleSearch} class="slds-button slds-button_brand" aria-disabled="false" title="Primary action" type="button">Search</button>
+                    </div>
+                </div>
+                
+                
+                
+                
+                <div class="search-option">
+
+                    <div class="option-container pagination">
+                        <lightning-combobox
+                            class="pagination-options"
+                            name="pagination"
+                            variant="label-hidden"
+                            value={pageSize}
+                            placeholder="Page Size"
+                            options={pageSizeOptions}
+                            onchange={handleChangePageSize} >
+                        </lightning-combobox>
+                    </div>
+
+                    <div class="option-container sort">
+                        <h3 class="slds-text-heading_small">Sort</h3>
+    
+                        <input name="orderSort" id="asc" type="radio" value="asc" onchange={handleChangeOrder} checked>
+                        <label for="asc">ASC</label>
+                        <input name="orderSort" id="desc" type="radio" value="desc" onchange={handleChangeOrder}>
+                        <label for="asc">DESC</label>
+    
+                        <lightning-combobox
+                            class="field-options"
+                            name="fields"
+                            variant="label-hidden"
+                            value={sortField}
+                            placeholder="Select Field"
+                            options={fieldOptions}
+                            onchange={handleChangeField} >
+                        </lightning-combobox>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="search-result">
+            <template lwc:if={serminars}>
+                <template for:each={serminars} for:item="serminar">
+                    <div key={serminar.id} class="search__item">
+                        <div class="img__container">
+                            <img src={serminar.Image__c} alt="serminar image">
+                        </div>
+                        <div class="serminar__container">
+                            <h1 class="serminar__name slds-text-heading_large">{serminar.Name}</h1>
+                            <lightning-formatted-rich-text class="slds-text-heading_small" value={serminar.Description__c}></lightning-formatted-rich-text>
+                            <p data-record-id={serminar.Id} onclick={handlePaginateDetail} class="serminar__link">Detail</p>
+                            <template lwc:if={serminar.Price__c}>
+                                <p class="serminar__price"><lightning-formatted-number value={serminar.Price__c}></lightning-formatted-number>đ</p>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+        </div>
+        <footer>
+            <div class="pagination">
+                <a class="page-btn" onclick={handleFirstPage}>First</a>
+                <a class="page-btn" onclick={handlePreviousPage}>Previous</a>
+                <div class="page-per-total"> {currentPage} / {totalPage}</div>
+                <a class="page-btn" onclick={handleNextPage}>Next</a>
+                <a class="page-btn" onclick={handleLastPage}>Last</a>
+            </div>
+        </footer>
+    </div>
+</template>
