@@ -5,6 +5,13 @@
     background-color: #C4DFDF;
 }
 
+.search-bar{
+    background-color: #ffffff;
+    padding: 30px 50px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
 .search-bar form{
     display: flex;
     flex-direction: column;
@@ -14,18 +21,14 @@
 .search-bar input[name="search"]{
     height: 44px;
     width: 100%;
-    min-width: 800px;
     text-align: center;
-    outline: none;
-    border: none;
     border-radius: 10px;
     margin-bottom: 20px;
 }
 
 .search-bar .search-filter {
     width: 100%;
-    background-color: #62bdc9;
-    padding: 50px 100px 40px;
+    background-color: #ffffff;
     border-radius: 10px;
 }
 
@@ -62,7 +65,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 20px 0;
 }
 
 .search-option .option-container{
@@ -79,12 +81,14 @@
 
 .search-result .search__item{
     display: flex;
-    min-height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 270px;
 }
 
 .search__item .img__container {
     width: 300px;
-    background-color: #C4DFDF;
+    background-color: #fff;
 }
 
 .img__container > img {
@@ -97,7 +101,15 @@
     position: relative;
     flex-grow: 1;
     padding: 24px;
-    background-color: rgb(80, 200, 255);
+    background-color: rgb(239 239 239);
+}
+
+.serminar__container > .serminar__description {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 10px;
 }
 
 .serminar__link{
@@ -120,6 +132,7 @@
     bottom: 12px;
     right: 20px;
     font-weight: bold;
+    font-size: 30px;
 }
 
 footer {

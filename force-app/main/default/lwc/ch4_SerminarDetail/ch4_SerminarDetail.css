@@ -1,5 +1,7 @@
 main{
-    padding: 0 15% 100px;
+    padding: 20px 15%;
+    background-color: #eaf6ff;
+    border-radius: 10px;
 }
 
 h1{
@@ -14,6 +16,8 @@ h2{
 
 .serminar {
     display: flex;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .serminar .avatar {
@@ -25,12 +29,20 @@ h2{
 .serminar .info {
     position: relative;
     width: 100%;
-    padding: 5px 20px;
+    padding: 20px;
     background-color: #9bd7ff;
+}
+
+.info .serminar-description{
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
 }
 
 .info .serminar-price{
     font-weight: 700;
+    font-size: 30px;
     position: absolute;
     bottom: 5px;
     right: 20px;
@@ -56,14 +68,19 @@ h2{
 }
 
 .section-description {
-    min-height: 200px;
-    padding: 30px 100px;
-    display: grid;
-    place-items: center;
-    background-color: #9bd7ff;
+    height: 150px;
+    padding: 20px;
+}
+
+.section-description > p {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
 }
 
 .toggle-btn {
+    margin-top: 5px;
     display: flex;
     justify-content: center;
 }

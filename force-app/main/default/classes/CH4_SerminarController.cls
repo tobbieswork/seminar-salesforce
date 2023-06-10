@@ -1,4 +1,4 @@
-public with sharing class CH4_SerminarController {
+public without sharing class CH4_SerminarController {
     @AuraEnabled(cacheable=false)
     public static List<Serminar__c> getSerminarList( String searchKey, String sortField, String sortOrder, String fromDate, String toDate, String fromPrice, String toPrice) {
 
@@ -66,10 +66,9 @@ public with sharing class CH4_SerminarController {
     @AuraEnabled
     public static Serminar__c getRecordDataFromId(String recordId){
         return [
-            SELECT Name, Image__c, Description__c, Price__c, (SELECT Name, Description__c, Status__c FROM Section__r) 
+            SELECT Name, Image__c, Description__c, Price__c, (SELECT Name, Description__c, Status__c, Order__c FROM Section__r ORDER BY Order__c NULLS LAST) 
             FROM Serminar__c 
             WHERE Id=:recordId
-            LIMIT 1
         ];
     }
 }

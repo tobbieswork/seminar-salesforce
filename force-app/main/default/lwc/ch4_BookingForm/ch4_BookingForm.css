@@ -1,0 +1,71 @@
+.container {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    padding: 20px 0;
+    margin: 0 200px;
+}
+
+.register-form{
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.register-form > * {
+    display: flex;
+    align-items: center;
+    margin: 14px 0;
+}
+
+
+.label{
+    width: 70px;
+    display: flex;
+    justify-content: end;
+}
+
+.input-field{
+    flex-grow: 1;
+    
+}
+
+.button-group{
+    justify-content: space-evenly;
+}
+
+
+.serminar {
+    padding: 10px 50px;
+}
+
+.serminar-info{
+    display: flex;
+    flex-direction: column;
+}
+
+.serminar-info >*{
+    margin-top: 15px;
+}
+
+.serminar-img{
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.serminar-info--name{
+    font-weight: bolder;
+    font-size: 26px;
+}
+
+.serminar-info--description{
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+
+.serminar-info--price{
+    align-self: center;
+}

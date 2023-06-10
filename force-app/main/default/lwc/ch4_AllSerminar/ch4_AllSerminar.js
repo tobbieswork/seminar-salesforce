@@ -1,5 +1,4 @@
 import { LightningElement, track, wire } from 'lwc';
-import { NavigationMixin } from "lightning/navigation";
 import getSerminarList from '@salesforce/apex/CH4_SerminarController.getSerminarList';
 import getAllPublicSerminar from '@salesforce/apex/CH4_SerminarController.getAllPublicSerminar';
 
@@ -20,7 +19,7 @@ const PAGE_SIZE_VALUE = [
     { label: '100', value: '100' },
 ]
 
-export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
+export default class Ch4_AllSerminar extends LightningElement {
     @track serminars;
     @track searchValue = null;
     @track dateRangeFrom = null;
@@ -31,7 +30,12 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
     @track sortField = 'name';
     @track pageSize = '10';
     @track currentPage = 1;
-    @track totalPage = 0;
+    @track totalPage = 1;
+    @track isSearching = false;
+
+    @track detailId;
+    isAllSerminarShown = true;
+    isSerminarDetailShown = false;
     error;
     tempData;
     
@@ -42,16 +46,12 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
             this.paginateSerminars(this.tempData);
             this.error = undefined;
         } else if (error) {
-            console.log('error')
             this.error = error;
             this.tempData = undefined;
             this.serminars = undefined;
         }
     }
 
-    connectedCallback(){
-        console.log('homepage render!!!');
-    }
     
     //DATA
     get orderOptions() {
@@ -87,6 +87,7 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
         this.dateRangeTo = null;
         this.priceRangeFrom = null;
         this.priceRangeTo = null;
+        this.findSerminar();
     }
 
     resetPagination(){
@@ -94,11 +95,20 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
         this.totalPage = 0;
     }
 
+    showSerminarDetail(){
+        this.isAllSerminarShown = false;
+        this.isSerminarDetailShown = true;
+    }
+
+    showAllSerminar(){
+        this.isAllSerminarShown = true;
+        this.isSerminarDetailShown = false;
+    }
+
     findSerminar(){
-        console.log(this.searchValue, this.dateRangeFrom, this.dateRangeTo, this.priceRangeFrom, this.priceRangeTo)
         getSerminarList(this.filterAndSortOptions())
             .then((data) => {
-                console.log(data);
+                this.isSearching = false;
                 this.tempData = data;
                 this.tempData = this.sortSerminars(this.tempData, this.sortOrder, this.sortField);
                 this.resetPagination();
@@ -106,7 +116,7 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
                 this.error = undefined;
             })
             .catch((error) => {
-                console.log('error');
+                this.isSearching = false;
                 this.error = error;
                 this.tempData = undefined;
                 this.serminars = undefined;
@@ -155,11 +165,9 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
 
     paginateSerminars(data){
         if(data.length < this.pageSize){
-            console.log('no need to paginate');
             this.totalPage = 1;
             this.serminars = data;
         }else{
-            console.log('paginated');
             this.totalPage = Math.ceil(data.length/this.pageSize);
             const allRecord = data;
             const start = (this.currentPage - 1) * parseInt(this.pageSize);
@@ -177,27 +185,22 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
 
     handleChangeDateFrom(event){
         this.dateRangeFrom = event.target.value;
-        console.log(event.target.value);
     }
 
     handleChangeDateTo(event){
         this.dateRangeTo = event.target.value;
-        console.log(event.target.value);
     }
 
     handleChangePriceFrom(event){
         this.priceRangeFrom = event.target.value;
-        console.log(event.target.value);
     }
 
     handleChangePriceTo(event){
         this.priceRangeTo = event.target.value;
-        console.log(event.target.value);
     }
 
     handleChangePageSize(event){
         this.pageSize = event.target.value;
-        console.log(this.pageSize);
 
         this.resetPagination();
         this.paginateSerminars(this.tempData);
@@ -212,22 +215,23 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
     
     handleChangeField(event) {
         this.sortField = event.target.value;
-
         this.tempData = this.sortSerminars(this.tempData, this.sortOrder, this.sortField);
         this.paginateSerminars(this.tempData);
     }
 
     handleClearFilter(event) {
-        resetFilter();
+        this.resetFilter();
     }
     
     handleSearch(event) {
+        this.isSearching = true;
         this.findSerminar();
     }
     
     handleOnEnter(event){
         if(event.keyCode === 13){
             this.searchValue = event.target.value;
+            this.isSearching = true;
             this.findSerminar();
         }
     }
@@ -248,7 +252,6 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
     handlePreviousPage(event){
         if(this.currentPage > 1){
             this.currentPage -= 1;
-            console.log(this.currentPage);
             this.paginateSerminars(this.tempData);
 
         }
@@ -257,29 +260,18 @@ export default class Ch4_AllSerminar extends NavigationMixin(LightningElement) {
     handleNextPage(event){
         if(this.currentPage < this.totalPage){
             this.currentPage += 1;
-            console.log(this.currentPage);
             this.paginateSerminars(this.tempData);
             
         }
     }
 
-    handlePaginateDetail(event){
-        console.log('clicked!')
-        console.log(event.target.dataset.recordId);
-        let cmpDef = {
-            componentDef: "c:ch4_SerminarDetail",
-            attributes: {
-                recordId: event.target.dataset.recordId
-            }
-        };
-        let encodedDef = btoa(JSON.stringify(cmpDef));
+    handleShowDetail(event){
+        this.detailId = event.target.dataset.recordId;
+        this.showSerminarDetail();
+    }
 
-        this[NavigationMixin.Navigate]({
-            type: "standard__webPage",
-            attributes: {
-                url: "/one/one.app#" + encodedDef
-            }
-        });
+    handleShowAllSeminar(event){
+        this.showAllSerminar();
     }
 
     handleSubmit(event){
