@@ -1,11 +1,11 @@
 <template>
 
     <div class="slds-card container">
-        <form class="register-form" onsubmit={handleRegister}>
+        <div class="register-form">
             <div class="slds-form-element">
                 <label class="label slds-form-element__label">
                   <abbr class="slds-required" title="required">* </abbr>Name</label>
-                <lightning-input onblur={handleChangeName} class="input-field" type="text" label="Enter some text" variant="label-hidden" placeholder="Please input your name…" maxlength="32" pattern="[^0-9]*" required></lightning-input>
+                <lightning-input onblur={handleChangeName} class="input-field" type="text" label="Enter some text" variant="label-hidden" placeholder="Please input your name…" required></lightning-input>
             </div>
             <div class="slds-form-element">
                 <label class="label slds-form-element__label">
@@ -21,7 +21,7 @@
                     variant="label-hidden" 
                     label="Email address" 
                     placeholder="Please input your email…" 
-                    pattern="[^@\s]+@[^@\s]+"
+                    pattern=".+@gmail.com"
                     required>
                 </lightning-input>
             </div>
@@ -46,53 +46,29 @@
             </div>
             <div class="slds-form-element">
                 <label class="label slds-form-element__label">Voucher</label>
-                <div class="voucher-input slds-form-element__control">
+                <div class="slds-form-element__control">
                     <input
                         class="slds-input sort-input" 
-                        oninput={handleChangeVoucher}
+                        onchange={handleChangeVoucher} 
                         type="text" placeholder="" 
                     />
-                    <div class="result">
-                        <template if:true={showValidVoucherMessage}>
-                            <p class="success">
-                                Congratulations! You've got a voucher! Saving {voucherDiscount}% ✔️
-                            </p>
-                        </template>
-                        <template if:true={showInvalidVoucherMessage}>
-                            <p class="fail">
-                                Voucher is not valid! ❌
-                            </p>
-                        </template>
-                    </div>
                 </div>
-                <button
-                    onclick={handleVerifyVoucher}
-                    class="verify-btn"
-                    id="verify-btn"
-                    type="button">
-                    Verify
-                </button>
-                
             </div>
-
-            <div>
-                <lightning-input onchange={handleChangeAgree} type="checkbox" label="I agree with the term and policy to register this serminar" name="agreement" required></lightning-input>
-            </div>
+            <lightning-input onchange={handleChangeAgree} type="checkbox" label="I agree with the term and policy to register this serminar" name="agreement" required></lightning-input>
             <div class="button-group">
                 <button onclick={handleBackHomepage} 
                         class="slds-button slds-button_neutral" 
                         type="button">
                         Cancel
                 </button>
-                <button 
-                        
-                        disabled={isRegisting}
+                <button onclick={handleRegister}
+                        disabled={isValidated}
                         class="slds-button slds-button_brand" 
-                        type="submit">
+                        type="button">
                         Register
                 </button>
             </div>
-        </form>
+        </div>
         <div class="serminar">
             <template lwc:if={img}>
                 <img class="serminar-img" src={img} alt="">
@@ -103,15 +79,7 @@
             <div class="serminar-info">
                 <h1 class="serminar-info--name slds-text-title">{name}</h1>
                 <p class="serminar-info--description slds-text-body_regular"><lightning-formatted-rich-text class="slds-text-heading_small" value={description}></lightning-formatted-rich-text></p>
-                <div class="price-container">
-                    <template lwc:if={discountPrice}>
-                        <p class="serminar-info--old-price slds-text-heading_medium"><lightning-formatted-number value={price}></lightning-formatted-number>đ</p>
-                        <h2 class="serminar-info--price slds-text-heading_medium"><lightning-formatted-number value={discountPrice}></lightning-formatted-number>đ</h2>
-                    </template>
-                    <template lwc:else>
-                        <h2 class="serminar-info--price slds-text-heading_medium"><lightning-formatted-number value={price}></lightning-formatted-number>đ</h2>
-                    </template>
-                </div>
+                <h2 class="serminar-info--price slds-text-heading_medium"><lightning-formatted-number value={price}></lightning-formatted-number>đ</h2>
             </div>
         </div>
     </div>

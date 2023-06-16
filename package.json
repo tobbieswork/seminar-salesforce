@@ -37,5 +37,9 @@
     "**/{aura,lwc}/**": [
       "eslint"
     ]
+  },
+  "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "paypal-rest-sdk": "^1.8.1"
   }
 }

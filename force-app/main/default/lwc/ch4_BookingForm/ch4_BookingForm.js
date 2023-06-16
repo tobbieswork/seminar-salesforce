@@ -1,9 +1,6 @@
 import { LightningElement, track, api } from 'lwc';
 import insertBooking from '@salesforce/apex/CH4_BookingController.insertBooking';
 import validateVoucher from '@salesforce/apex/CH4_BookingController.validateVoucher';
-
-
-
 export default class Ch4_BookingForm extends LightningElement {
     
     @api idser;
@@ -14,19 +11,20 @@ export default class Ch4_BookingForm extends LightningElement {
 
     contactName;
     contactEmail;
-    contactPhone;
-    contactBirthdate;
-    voucher;
+    contactPhone = '';
+    contactBirthdate = [];
+    voucher = '';
+    discountPrice;
+    voucherDiscount = 0;
 
-    validEmail = false;
-    validName = false;
-    validAgree = false;
-    isRegisting = false;
-
+    showValidVoucherMessage = false;
+    showInvalidVoucherMessage = false;
+    
+    @track isRegisting = false;
     @track selectedDateFormatted;
 
-    get isValidated (){
-        return ! ((this.validEmail && (this.validName) && this.validAgree) && !this.isRegisting);
+    isVoucherApplied(){
+        return this.showValidVoucherMessage;
     }
 
     formatDate(dateValue) {
@@ -42,43 +40,69 @@ export default class Ch4_BookingForm extends LightningElement {
         // this.selectedDateFormatted = this.formatDate(this.selectedDate);
     }
 
-    handleRegister(){
+    handleRegister(event){
+        event.preventDefault();
         this.isRegisting = true;
-        validateVoucher({
-            name: this.contactName, 
-            email: this.contactEmail, 
-            phone: this.contactPhone, 
-            birthdate: this.contactBirthdate, 
-            voucher: this.voucher, 
-            serName: this.name,
-            price: String(this.price)
-        })
+
+        if(this.voucher === ''){
+            console.log(this.voucher);
+            insertBooking({
+                id: this.idser,
+                name: this.contactName, 
+                email: this.contactEmail, 
+                phone: this.contactPhone, 
+                birthdate: this.contactBirthdate, 
+                voucher: this.voucher, 
+                serName: this.name,
+                price: String(this.price)
+            })
             .then(result => {
-                let newPrice = this.price;
-                if(result === null){
-                    this.voucher = ''
-
+                this.handleBackHomepage();
+            })
+            .catch(error => {
+                this.isRegisting = false;
+            })
+        }else{
+            validateVoucher({
+                voucher: this.voucher
+            })
+            .then(result => {
+                if(result !== null){
+                    this.showValidVoucherMessage = true;
+                    this.showInvalidVoucherMessage = false;
+                    this.voucherDiscount = result;
+                    this.discountPrice = this.price * (100 - result) / 100;
                 }else{
-                    newPrice = this.price*(100 - result)/100;
+                    this.showValidVoucherMessage = false;
+                    this.showInvalidVoucherMessage = true;
+                    this.voucherDiscount = null;
+                    this.discountPrice = null;
+                    this.isRegisting = false;
                 }
-
-                insertBooking({
-                    id: this.idser,
-                    name: this.contactName, 
-                    email: this.contactEmail, 
-                    phone: this.contactPhone, 
-                    birthdate: this.contactBirthdate, 
-                    voucher: this.voucher, 
-                    serName: this.name,
-                    price: String(newPrice)
-                })
+            })
+            .then(() => {
+                if(this.voucherDiscount){
+                    insertBooking({
+                        id: this.idser,
+                        name: this.contactName, 
+                        email: this.contactEmail, 
+                        phone: this.contactPhone, 
+                        birthdate: this.contactBirthdate, 
+                        voucher: this.voucher, 
+                        serName: this.name,
+                        price: String(this.discountPrice)
+                    })
                     .then(result => {
                         this.handleBackHomepage();
                     })
                     .catch(error => {
                         this.isRegisting = false;
                     })
+                }
+    
             })
+        }
+
     }
     handleChangeName(event){
         this.contactName = event.target.value;
@@ -94,15 +118,44 @@ export default class Ch4_BookingForm extends LightningElement {
         this.contactPhone = event.target.value;
     }
     handleChangeBorn(event){
-        console.log(event.target.value);
-        this.contactBirthdate = (event.target.value).split('-');
+        const bdArr = [];
+        if(event.target.value !== ''){
+            const bd = new Date(event.target.value);
+            bdArr.push(bd.getFullYear());
+            bdArr.push(bd.getMonth() + 1);
+            bdArr.push(bd.getDate());
+        }
+        this.contactBirthdate = [...bdArr];
     }
     handleChangeVoucher(event){
         this.voucher = event.target.value;
+        this.showValidVoucherMessage = false;
+        this.showInvalidVoucherMessage = false;
     }
 
     handleChangeAgree(event){
         this.validAgree = event.target.checked;
+    }
+
+    handleVerifyVoucher(event){
+        if(this.voucher !== ''){
+            validateVoucher({
+                voucher: this.voucher
+            })
+            .then(result => {
+                if(result !== null){
+                    this.showValidVoucherMessage = true;
+                    this.showInvalidVoucherMessage = false;
+                    this.voucherDiscount = result;
+                    this.discountPrice = this.price * (100 - result) / 100;
+                }else{
+                    this.showValidVoucherMessage = false;
+                    this.showInvalidVoucherMessage = true;
+                    this.voucherDiscount = null;
+                    this.discountPrice = null;
+                }
+            })
+        }
     }
 
 

@@ -27,17 +27,6 @@
                                 <template for:each={shownSections} for:item="section" for:index="index">
                                     <lightning-accordion-section key={section.Id} name={section.Id} label={section.Name}>
                                         <div class="section-item">
-                                            <!-- <div class="section-name">
-                                                <span></span>
-                                                <h2>
-                                                    <template lwc:if={section.Order__c}>
-                                                        Section {section.Order__c}: {section.Name}
-                                                    </template>
-                                                    <template lwc:else>
-                                                        {section.Name}
-                                                    </template>
-                                                </h2>
-                                            </div> -->
                                             <div class="section-description">
                                                 <p>
                                                     <lightning-formatted-rich-text class="slds-text-heading_small" value={section.Description__c}></lightning-formatted-rich-text>
