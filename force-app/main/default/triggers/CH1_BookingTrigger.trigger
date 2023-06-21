@@ -1,6 +1,6 @@
 trigger CH1_BookingTrigger on Booking__c (before insert, before update) {
     if(Trigger.isBefore){
-        if(Trigger.isInsert){
+        if(Trigger.isInsert || Trigger.isUpdate){
             CH1_BookingTriggerHandler.validateBookingInsertion(Trigger.new);
         }
     }

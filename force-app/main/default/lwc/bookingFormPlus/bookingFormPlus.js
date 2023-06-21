@@ -1,7 +1,7 @@
 import { LightningElement, track, api } from 'lwc';
 import insertBooking from '@salesforce/apex/CH4_BookingController.insertBooking';
 import validateVoucher from '@salesforce/apex/CH4_BookingController.validateVoucher';
-
+import { loadScript } from "paypal/paypal-js";
 
 
 export default class Ch4_BookingForm extends LightningElement {
@@ -24,6 +24,20 @@ export default class Ch4_BookingForm extends LightningElement {
     isRegisting = false;
 
     @track selectedDateFormatted;
+
+    connectedCallback(){
+        const clientId = 'YOUR_CLIENT_ID';
+        // const clientSecret = 'YOUR_CLIENT_SECRET';
+
+        loadScript({ "client-id": clientId })
+        .then((paypal) => {
+            console.log(paypal);
+        })
+        .catch((err) => {
+            console.error("failed to load the PayPal JS SDK script", err);
+        });
+    }
+
 
     get isValidated (){
         return ! ((this.validEmail && (this.validName) && this.validAgree) && !this.isRegisting);
