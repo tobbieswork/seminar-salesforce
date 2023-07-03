@@ -1,6 +1,6 @@
 public without sharing class CH4_BookingController {
     @AuraENabled
-    public static Boolean insertBooking(String id, String name, String email, String phone, List<Integer> birthdate, String voucher, String serName, String price) {
+    public static Id insertBooking(String id, String name, String email, String phone, List<Integer> birthdate, String voucher, String serName, String price) {
         Contact newCt = new Contact();
         newCt.LastName = name;
         newCt.Email = email;
@@ -20,7 +20,7 @@ public without sharing class CH4_BookingController {
 
         insert newBooking;
 
-        return true;
+        return newBooking.Id;
     }
     @AuraENabled
     public static Decimal validateVoucher(String voucher) {
@@ -30,6 +30,18 @@ public without sharing class CH4_BookingController {
         } catch (QueryException ex) {
             // Handle the query exception
             return null;
+        }
+    }
+    @AuraENabled
+    public static Boolean updateBookingToDone(String bookingId){
+        Booking__c booking = new Booking__c(Id = bookingId);
+        booking.Status__c = 'Done';
+        try {
+            update booking;
+            return true;
+        } catch (Exception e) {
+            System.debug('Can not update booking ' + e.getMessage());
+            return false;
         }
     }
 }

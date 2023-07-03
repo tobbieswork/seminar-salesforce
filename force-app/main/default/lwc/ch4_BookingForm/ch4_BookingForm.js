@@ -1,6 +1,8 @@
 import { LightningElement, track, api } from 'lwc';
 import insertBooking from '@salesforce/apex/CH4_BookingController.insertBooking';
 import validateVoucher from '@salesforce/apex/CH4_BookingController.validateVoucher';
+import updateBookingToDone from '@salesforce/apex/CH4_BookingController.updateBookingToDone';
+import createOrder from '@salesforce/apex/CH4_PayPalAPI.createOrder';
 export default class Ch4_BookingForm extends LightningElement {
     
     @api idser;
@@ -19,7 +21,7 @@ export default class Ch4_BookingForm extends LightningElement {
 
     showValidVoucherMessage = false;
     showInvalidVoucherMessage = false;
-    
+
     @track isRegisting = false;
     @track selectedDateFormatted;
 
@@ -40,12 +42,52 @@ export default class Ch4_BookingForm extends LightningElement {
         // this.selectedDateFormatted = this.formatDate(this.selectedDate);
     }
 
+    convertVndToUsd(vndAmount) {
+        // Assuming 1 USD = 23000 VND
+        const exchangeRate = 23000;
+        const usdAmount = vndAmount / exchangeRate;
+        const roundedUsdAmount = Math.round(usdAmount * 100) / 100; // Round to 2 decimal places
+
+        return roundedUsdAmount;
+    }
+
+    createOrderBody(bookingId, amount){
+        const orderBody = {
+            intent: "CAPTURE",
+            purchase_units: [
+                {
+                    reference_id: String(bookingId),
+                    amount: {
+                        currency_code: "USD",
+                        value: String(amount)
+                    }
+                }
+            ],
+            payment_source: {
+                paypal: {
+                    experience_context: {
+                        payment_method_preference: "IMMEDIATE_PAYMENT_REQUIRED",
+                        payment_method_selected: "PAYPAL",
+                        brand_name: "FURU CRM",
+                        locale: "en-US",
+                        landing_page: "LOGIN",
+                        user_action: "PAY_NOW",
+                        return_url: "https://furucrm72-dev-ed.develop.my.salesforce-sites.com/successPayment",
+                        cancel_url: "https://furucrm72-dev-ed.develop.my.site.com/BookingSerminar/"
+                    }
+                }
+            }
+        }
+
+        const jsonBody = JSON.stringify(orderBody);
+        return jsonBody;
+    }
+
     handleRegister(event){
         event.preventDefault();
         this.isRegisting = true;
 
         if(this.voucher === ''){
-            console.log(this.voucher);
             insertBooking({
                 id: this.idser,
                 name: this.contactName, 
@@ -57,10 +99,27 @@ export default class Ch4_BookingForm extends LightningElement {
                 price: String(this.price)
             })
             .then(result => {
-                this.handleBackHomepage();
+                if(this.price){
+                    const body = this.createOrderBody(String(result) ,String(this.price));
+                    createOrder({
+                        orderBody: body
+                    }).then((link) => {
+                        console.log(link);
+                        window.location.href = link;
+                    })
+                }else{
+                    updateBookingToDone({
+                        bookingId: result
+                    }).then((result)=>{
+                        console.log(result);
+                    }).then(()=>{
+                        this.handleBackHomepage();
+                    })
+                }
             })
             .catch(error => {
                 this.isRegisting = false;
+                console.log(error);
             })
         }else{
             validateVoucher({
@@ -71,7 +130,7 @@ export default class Ch4_BookingForm extends LightningElement {
                     this.showValidVoucherMessage = true;
                     this.showInvalidVoucherMessage = false;
                     this.voucherDiscount = result;
-                    this.discountPrice = this.price * (100 - result) / 100;
+                    this.discountPrice = Math.round(this.price * (100 - result) / 100);
                 }else{
                     this.showValidVoucherMessage = false;
                     this.showInvalidVoucherMessage = true;
@@ -93,10 +152,30 @@ export default class Ch4_BookingForm extends LightningElement {
                         price: String(this.discountPrice)
                     })
                     .then(result => {
-                        this.handleBackHomepage();
+
+                        if(this.discountPrice){
+                            const body = this.createOrderBody(String(result) ,String(this.discountPrice));
+                            createOrder({
+                                orderBody: body
+                            }).then((orderLink) => {
+                                console.log(orderLink);
+                                window.location.href = orderLink;
+                            }).catch(error => {
+                                console.log(error);
+                            })
+                        }else{
+                            updateBookingToDone({
+                                bookingId: result
+                            }).then((result)=>{
+                                console.log(result);
+                            }).then(()=>{
+                                this.handleBackHomepage();
+                            })
+                        }
                     })
                     .catch(error => {
                         this.isRegisting = false;
+                        console.log(error);
                     })
                 }
     
@@ -147,7 +226,7 @@ export default class Ch4_BookingForm extends LightningElement {
                     this.showValidVoucherMessage = true;
                     this.showInvalidVoucherMessage = false;
                     this.voucherDiscount = result;
-                    this.discountPrice = this.price * (100 - result) / 100;
+                    this.discountPrice = Math.round(this.price * (100 - result) / 100);
                 }else{
                     this.showValidVoucherMessage = false;
                     this.showInvalidVoucherMessage = true;

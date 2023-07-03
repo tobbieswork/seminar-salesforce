@@ -1,6 +1,5 @@
 <template>
     <template if:true={isAllSerminarShown}>
-
         <div class="container">
             <div class="search-bar">
                 <form name="searchForm" id="searchForm" onsubmit={handleSubmit}>
@@ -47,12 +46,13 @@
                         <div class="option-container sort">
                             <h3 class="slds-text-heading_small">Sort</h3>
         
-                            <input name="orderSort" id="asc" type="radio" value="asc" onchange={handleChangeOrder} checked>
+                            <input name="orderSort" id="asc" type="radio" value="ASC" onchange={handleChangeOrder} checked>
                             <label for="asc">ASC</label>
-                            <input name="orderSort" id="desc" type="radio" value="desc" onchange={handleChangeOrder}>
+                            <input name="orderSort" id="desc" type="radio" value="DESC" onchange={handleChangeOrder}>
                             <label for="asc">DESC</label>
         
                             <lightning-combobox
+                                style="margin: 0;"
                                 class="field-options"
                                 name="fields"
                                 variant="label-hidden"
@@ -79,14 +79,41 @@
                                 </template>
                             </div>
                             <div class="serminar__container">
-                                <h1 class="serminar__name slds-text-heading_large">{serminar.Name}</h1>
+                                <h1 data-record-id={serminar.Id} onclick={handleShowDetail} class="serminar__name slds-text-heading_large">{serminar.Name}</h1>
                                 <p class="serminar__description"><lightning-formatted-rich-text class="slds-text-heading_small" value={serminar.Description__c}></lightning-formatted-rich-text></p>
-                                <p data-record-id={serminar.Id} onclick={handleShowDetail} class="serminar__link">Detail</p>
+                                <div class="info-container">
+
+                                    <p class="serminar__period">Period: <span style="font-weight: normal;">{serminar.Start_Date__c} to {serminar.End_Date__c}</span></p>
+                                    <template lwc:if={serminar.Booking_Done_Quantity__c}>
+                                        <template lwc:if={serminar.Quantity__c}>
+                                            <p>Quantity: <span style="color: red;">{serminar.Booking_Done_Quantity__c}/{serminar.Quantity__c}</span></p>
+                                        </template>
+                                        <template lwc:else>
+                                            <p>Quantity: <span style="color: red;">{serminar.Booking_Done_Quantity__c}/<span style="font-size: 22px;position: relative;bottom: -1px;">&#8734;</span></span></p>
+                                        </template>
+                                    </template>
+                                    <template lwc:else>
+                                        <template lwc:if={serminar.Quantity__c}>
+                                            <p>Quantity: <span style="color: red;">0/{serminar.Quantity__c}</span></p>
+                                        </template>
+                                        <template lwc:else>
+                                            <p>Quantity: <span style="color: red;">0/<span style="font-size: 22px;position: relative;bottom: -1px;">&#8734;</span></span></p>
+                                        </template>
+                                    </template>
+                                    <button data-record-id={serminar.Id} onclick={handleShowBooking} class="serminar__register slds-button slds-button_brand">Register</button>
+                                </div>
+                                <!-- <template lwc:if={seminar.Booking__r}>
+                                    <p class="serminar__quantity">Quantity: seminar.Booking__r.length/10</p>
+                                </template> -->
+                                <!-- <template if:false={seminar.Booking__c}>
+                                    <p class="serminar__quantity">Quantity: 0/10</p>
+                                </template> -->
+                                <!-- <p data-record-id={serminar.Id} onclick={handleShowDetail} class="serminar__link">Detail</p> -->
                                 <template lwc:if={serminar.Price__c}>
-                                    <p class="serminar__price"><lightning-formatted-number value={serminar.Price__c}></lightning-formatted-number>đ</p>
+                                    <p class="serminar__price"><lightning-formatted-number value={serminar.Price__c}></lightning-formatted-number>$</p>
                                 </template>
                                 <template lwc:else>
-                                    <p class="serminar__price">Free</p>
+                                    <p class="serminar__price" >✨FREE✨</p>
                                 </template>
                             </div>
                         </div>
@@ -95,17 +122,18 @@
             </div>
             <footer>
                 <div class="pagination">
-                    <a class="page-btn" onclick={handleFirstPage}>First</a>
-                    <a class="page-btn" onclick={handlePreviousPage}>Previous</a>
+                    <button disabled={isFirstDisable} class="page-btn" onclick={handleFirstPage}>First</button>
+                    <button disabled={isFirstDisable} class="page-btn" onclick={handlePreviousPage}>Previous</button>
                     <div class="page-per-total"> {currentPage} / {totalPage}</div>
-                    <a class="page-btn" onclick={handleNextPage}>Next</a>
-                    <a class="page-btn" onclick={handleLastPage}>Last</a>
+                    <button disabled={isLastDisable} class="page-btn" onclick={handleNextPage}>Next</button>
+                    <button disabled={isLastDisable} class="page-btn" onclick={handleLastPage}>Last</button>
                 </div>
             </footer>
-        </div>
+        </div>  
     </template>
     <template if:true={isSerminarDetailShown}>
         <c-ch4_-serminar-detail
+            is-booking-shown={bookingTab}
             serminar-id={detailId}
             onback={handleShowAllSeminar}
         ></c-ch4_-serminar-detail>

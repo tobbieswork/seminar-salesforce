@@ -15,7 +15,7 @@
                             <lightning-formatted-rich-text class="slds-text-heading_small" value={serminarInfo.Description__c}></lightning-formatted-rich-text>
                         </p>
                         <p class="serminar-price">
-                            <lightning-formatted-number value={serminarInfo.Price__c}></lightning-formatted-number>đ
+                            <lightning-formatted-number value={serminarInfo.Price__c}></lightning-formatted-number>$
                         </p>
                     </div>  
                 </div>
@@ -59,12 +59,14 @@
         </main>
     </template>
     <template if:true={isBookingShown} >
-        <c-ch4_-booking-form onhome={handleReturnHomepage} 
-                idser={serminarId}
-                img={serminarInfo.Image__c}
-                name={serminarInfo.Name}
-                description={serminarInfo.Description__c}
-                price={serminarInfo.Price__c}>
-        </c-ch4_-booking-form>
+        <template lwc:if={serminarInfo}>
+            <c-ch4_-booking-form onhome={handleReturnHomepage} 
+                    idser={serminarId}
+                    img={serminarInfo.Image__c}
+                    name={serminarInfo.Name}
+                    description={serminarInfo.Description__c}
+                    price={serminarInfo.Price__c}>
+            </c-ch4_-booking-form>
+        </template>
     </template>
 </template>

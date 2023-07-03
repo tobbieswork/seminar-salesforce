@@ -1,3 +1,70 @@
 <template>
-    
+    <template if:true={isSerminarDetailShown}>
+        <main>
+            <template lwc:if={serminarInfo}>
+                <div class="serminar">
+                    <template lwc:if={serminarInfo.Image__c}>
+                        <img class="avatar" src={serminarInfo.Image__c} alt="">
+                    </template>
+                    <template lwc:else>
+                        <img class="avatar" src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg" alt="serminar image">
+                    </template>
+                    <div class="info">
+                        <h1 class="serminar-name">{serminarInfo.Name}</h1>
+                        <p class="serminar-description">
+                            <lightning-formatted-rich-text class="slds-text-heading_small" value={serminarInfo.Description__c}></lightning-formatted-rich-text>
+                        </p>
+                        <p class="serminar-price">
+                            <lightning-formatted-number value={serminarInfo.Price__c}></lightning-formatted-number>đ
+                        </p>
+                    </div>  
+                </div>
+                <template lwc:if={shownSections}>
+                <div class="sections">
+                        <div class="slds-card">
+                            <lightning-accordion allow-multiple-sections-open
+                                                onsectiontoggle={handleSectionToggle}>
+                                <template for:each={shownSections} for:item="section" for:index="index">
+                                    <lightning-accordion-section key={section.Id} name={section.Id} label={section.Name}>
+                                        <div class="section-item">
+                                            <div class="section-description">
+                                                <p>
+                                                    <lightning-formatted-rich-text class="slds-text-heading_small" value={section.Description__c}></lightning-formatted-rich-text>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </lightning-accordion-section>  
+                                </template>
+                            </lightning-accordion>
+                        </div>
+                        <template if:true={isExpandable}>
+                            <template lwc:if={isShow}>
+                                <div class="toggle-btn" onclick={handleToggleExpandation}>
+                                    <p>Show less</p>
+                                </div>
+                            </template>
+                            <template lwc:else>
+                                <div class="toggle-btn" onclick={handleToggleExpandation}>
+                                    <p>Show all</p>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+                <div class="navigation">
+                    <button onclick={handleReturnHomepage} class="slds-button slds-button_neutral" aria-disabled="false" type="button">Back to Serminars</button>
+                    <button onclick={handleRegister} class="slds-button slds-button_brand" aria-disabled="false" type="button">Register</button>
+                </div>
+            </template>
+        </main>
+    </template>
+    <template if:true={isBookingShown} >
+        <c-booking-form-plus onhome={handleReturnHomepage} 
+                idser={serminarId}
+                img={serminarInfo.Image__c}
+                name={serminarInfo.Name}
+                description={serminarInfo.Description__c}
+                price={serminarInfo.Price__c}>
+        </c-booking-form-plus>
+    </template>
 </template>

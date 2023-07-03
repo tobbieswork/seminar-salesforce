@@ -3,14 +3,14 @@ import getSerminarList from '@salesforce/apex/CH4_SerminarController.getSerminar
 import getAllPublicSerminar from '@salesforce/apex/CH4_SerminarController.getAllPublicSerminar';
 
 const SORT_ORDER_VALUE = [
-    { label: 'ASC', value: 'asc' },
-    { label: 'DESC', value: 'desc' },
+    { label: 'ASC', value: 'ASC' },
+    { label: 'DESC', value: 'DESC' },
 ];
 
 const SORT_FIELD_VALUE = [
-    { label: 'Name', value: 'name' },
-    { label: 'Price', value: 'price' },
-    { label: 'Start Date', value: 'startDate' },
+    { label: 'Name', value: 'Name' },
+    { label: 'Price', value: 'Price__c' },
+    { label: 'Start Date', value: 'Start_Date__c' },
 ];
 
 const PAGE_SIZE_VALUE = [
@@ -26,13 +26,14 @@ export default class Ch4_AllSerminar extends LightningElement {
     @track dateRangeTo = null;
     @track priceRangeFrom = null;
     @track priceRangeTo = null;
-    @track sortOrder = 'asc';
-    @track sortField = 'name';
+    @track sortOrder = 'ASC';
+    @track sortField = 'Name';
     @track pageSize = '10';
     @track currentPage = 1;
     @track totalPage = 1;
     @track isSearching = false;
 
+    @track bookingTab;
     @track detailId;
     isAllSerminarShown = true;
     isSerminarDetailShown = false;
@@ -64,6 +65,14 @@ export default class Ch4_AllSerminar extends LightningElement {
 
     get pageSizeOptions() {
         return PAGE_SIZE_VALUE;
+    }
+
+    get isFirstDisable(){
+        return this.currentPage === 1;
+    }
+
+    get isLastDisable(){
+        return this.currentPage === this.totalPage;
     }
 
     filterAndSortOptions(){
@@ -130,26 +139,26 @@ export default class Ch4_AllSerminar extends LightningElement {
         const serminarsSorted = [...data];
         let isAsc;
 
-        if (order === 'asc'){
+        if (order === 'ASC'){
             isAsc = 1;
         }else{
             isAsc = -1;
         }
 
         switch (field) {
-            case 'name':
+            case 'Name':
                 serminarsSorted.sort((a,b) => {
                     return a.Name > b.Name ? isAsc : a.Name < b.Name ? -isAsc : 0;
                 })
                 break;
-            case 'price':
+            case 'Price__c':
                 serminarsSorted.sort((a,b) => {
                     const priceA = a.Price__c || 0;
                     const priceB = b.Price__c || 0;
                     return priceA > priceB ? isAsc : priceA < priceB ? -isAsc : 0;
                 })
                 break;
-            case 'startDate':
+            case 'Start_Date__c':
                 serminarsSorted.sort((a,b) => {
                     const dateA = a.Start_Date__c ? new Date(a.Start_Date__c) : 0;
                     const dateB = b.Start_Date__c ? new Date(b.Start_Date__c) : 0;
@@ -164,11 +173,11 @@ export default class Ch4_AllSerminar extends LightningElement {
     }
 
     paginateSerminars(data){
-        if(data.length < this.pageSize){
+        if(data.length < this.pageSize && data.length){
             this.totalPage = 1;
             this.serminars = data;
         }else{
-            this.totalPage = Math.ceil(data.length/this.pageSize);
+            this.totalPage = data.length ? Math.ceil(data.length/this.pageSize) : 1;
             const allRecord = data;
             const start = (this.currentPage - 1) * parseInt(this.pageSize);
             const end = this.currentPage * parseInt(this.pageSize);
@@ -266,6 +275,13 @@ export default class Ch4_AllSerminar extends LightningElement {
     }
 
     handleShowDetail(event){
+        this.bookingTab = false;
+        this.detailId = event.target.dataset.recordId;
+        this.showSerminarDetail();
+    }
+
+    handleShowBooking(event){
+        this.bookingTab = true;
         this.detailId = event.target.dataset.recordId;
         this.showSerminarDetail();
     }

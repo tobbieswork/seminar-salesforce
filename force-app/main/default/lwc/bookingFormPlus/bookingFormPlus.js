@@ -1,7 +1,9 @@
 import { LightningElement, track, api } from 'lwc';
+import { loadScript } from 'lightning/platformResourceLoader';
 import insertBooking from '@salesforce/apex/CH4_BookingController.insertBooking';
 import validateVoucher from '@salesforce/apex/CH4_BookingController.validateVoucher';
-import { loadScript } from "paypal/paypal-js";
+import PayPal_JS_SDK from "@salesforce/resourceUrl/PayPal_JS_SDK";
+import paypaljs from "@salesforce/resourceUrl/paypal_sdk";
 
 
 export default class Ch4_BookingForm extends LightningElement {
@@ -25,18 +27,57 @@ export default class Ch4_BookingForm extends LightningElement {
 
     @track selectedDateFormatted;
 
-    connectedCallback(){
-        const clientId = 'YOUR_CLIENT_ID';
-        // const clientSecret = 'YOUR_CLIENT_SECRET';
+    async connectedCallback(){
+        console.log('Component mounted');
 
-        loadScript({ "client-id": clientId })
-        .then((paypal) => {
-            console.log(paypal);
+        await loadScript(this, PayPal_JS_SDK + '/PAYPAL_SDK/paypal_sdk.js')
+        .then(() => {
+            this.initializePayPal();
         })
         .catch((err) => {
-            console.error("failed to load the PayPal JS SDK script", err);
+            console.log(...err);
         });
     }
+
+    initializePayPal() {
+        console.log('Component run initial');
+
+        // Check if PayPal SDK is loaded
+    
+        // Configure PayPal SDK with API credentials
+        // paypal.configure({
+        //   client_id: 'YOUR_CLIENT_ID',
+        //   secret_key: 'YOUR_SECRET_KEY',
+        // });
+    
+        // Create a PayPal checkout button
+        paypal.Buttons({
+          createOrder: (data, actions) => {
+            return actions.order.create({
+              purchase_units: [
+                {
+                  amount: {
+                    currency_code: 'USD',
+                    value: '10.00', // Set the amount to pay here
+                  },
+                },
+              ],
+            });
+          },
+          onApprove: (data, actions) => {
+            // Handle the payment approval and completion
+            actions.order.capture().then((details) => {
+              // Payment is successfully captured
+              console.log('Payment successful:', details);
+              // Perform further actions or update the order status
+            });
+          },
+          onError: (err) => {
+            // Handle errors that occur during the payment process
+            console.error(err);
+          },
+        }).render(this.template.querySelector('.paypal-container'));
+      }
 
 
     get isValidated (){

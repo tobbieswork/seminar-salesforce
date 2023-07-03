@@ -6,9 +6,13 @@ public with sharing class CH2_PaymentTriggerHandler {
         for(Payment__c payment: payments){
             bookingIdsSet.add(payment.Booking__c);
         }
-        
         //SET Bookings FROM Database TO Ids
-        Map<Id, Booking__c> idToBookingMap = new Map<Id, Booking__c>([SELECT Id, Total_Amount__c, Contact__c, Serminar__c, Serminar__r.Code__c, Serminar__r.Start_Date__c  FROM Booking__c WHERE Id IN : bookingIdsSet]);
+        Map<Id, Booking__c> idToBookingMap = new Map<Id, Booking__c>();
+        try {
+            idToBookingMap = new Map<Id, Booking__c>([SELECT Id, Total_Amount__c, Contact__c, Serminar__c, Serminar__r.Code__c, Serminar__r.Start_Date__c  FROM Booking__c WHERE Id IN : bookingIdsSet]);
+        } catch (Exception e) {
+            System.debug(e.getMessage());
+        }
         
         //LOOP through Payments Insert List and CHECK condition (Payment price equal to Booking total amount)
         List<Contact_Card__c> ctcardList = new List<Contact_Card__c>();
@@ -25,7 +29,11 @@ public with sharing class CH2_PaymentTriggerHandler {
         }
         
         if(ctcardList.size() > 0){
-        	insert ctcardList;
+            try {
+                insert ctcardList;
+            } catch (Exception e) {
+                System.debug(e.getMessage());
+            }
         }
     }
 }

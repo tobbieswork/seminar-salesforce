@@ -23,8 +23,8 @@ public without sharing class CH4_SerminarController {
             
         sortOrder = sortOrder.toUppercase();
 
-        if (searchKey == ''){
-            String statementQueryAllSerminar = 'SELECT Id, Name, Description__c, Price__c, Start_Date__c, Image__c '
+        if (searchKey == '' || searchKey.length() == 1){
+            String statementQueryAllSerminar = 'SELECT Id, Name, Booking_Done_Quantity__c, Quantity__c, Description__c, Price__c, Start_Date__c, Image__c, End_Date__c '
             + ' FROM Serminar__c '
             + ' WHERE Is_Public__c = \'True\' ' + optionalFilter
             + ' ORDER BY '+ sortField + ' ' + sortOrder;
@@ -37,7 +37,7 @@ public without sharing class CH4_SerminarController {
         searchKey = searchKey + '*';
 
         String queryStatement = 'FIND \'' + searchKey
-        + '\' IN ALL FIELDS RETURNING Serminar__c(Id, Name, Description__c, Price__c, Start_Date__c, Image__c'
+        + '\' IN ALL FIELDS RETURNING Serminar__c(Id, Name, Booking_Done_Quantity__c, Quantity__c, Description__c, Price__c, Start_Date__c, Image__c, End_Date__c '
         +' WHERE (Is_Public__c = \'True\' ' + optionalFilter + ')'
         +' ORDER BY ' + sortField + ' ' + sortOrder + ')';
 
@@ -53,7 +53,7 @@ public without sharing class CH4_SerminarController {
     public static List<Serminar__c> getAllPublicSerminar(){
         try {
             return [
-                SELECT Id, Name, Description__c, Price__c, Start_Date__c, Image__c 
+                SELECT Id, Name, Booking_Done_Quantity__c, Quantity__c, Description__c, Price__c, Start_Date__c, Image__c, End_Date__c, (SELECT Id FROM Booking__r WHERE Status__c = 'Done') 
                 FROM Serminar__c  
                 WHERE Is_Public__c = 'True'
                 ORDER BY Name ASC
@@ -66,7 +66,7 @@ public without sharing class CH4_SerminarController {
     @AuraEnabled
     public static Serminar__c getRecordDataFromId(String recordId){
         return [
-            SELECT Name, Image__c, Description__c, Price__c, (SELECT Name, Description__c, Status__c, Order__c FROM Section__r ORDER BY Order__c NULLS LAST) 
+            SELECT Name, Image__c, Booking_Done_Quantity__c, Quantity__c, Description__c, Price__c, Start_Date__c, End_Date__c, (SELECT Name, Description__c, Status__c, Order__c FROM Section__r ORDER BY Order__c NULLS LAST) 
             FROM Serminar__c 
             WHERE Id=:recordId
         ];

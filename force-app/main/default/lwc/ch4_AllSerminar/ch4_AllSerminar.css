@@ -22,7 +22,8 @@
     height: 44px;
     width: 100%;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 30px;
+    border: solid 1px #000;
     margin-bottom: 20px;
 }
 
@@ -45,6 +46,7 @@
 }
 
 .filter-input{
+    margin: 10px;
     flex-grow: 1;
 }
 
@@ -104,22 +106,34 @@
     background-color: rgb(239 239 239);
 }
 
+.serminar__name{
+    display: inline-block;
+    font-weight: normal;
+    cursor: pointer;
+}
+
 .serminar__container > .serminar__description {
     display: -webkit-box;
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin-top: 10px;
 }
 
-.serminar__link{
-    position: absolute;
-    bottom: 0;
-    right: 50%;
-    transform: translateY(-50%);
-    font-size: 12px;
-    color: #04223c;
+.serminar__period{
+    font-size: 14px;
     font-weight: bold;
+}
+
+.serminar__register{
+    margin-top: 8px;
+    padding: 2px 20px;
+}
+.info-container{
+    margin-top: 20px;
+    position: absolute;
+    bottom: 12px;
+    
 }
 
 .serminar__link:hover{
@@ -133,6 +147,7 @@
     right: 20px;
     font-weight: bold;
     font-size: 30px;
+    color: darkcyan;
 }
 
 footer {
@@ -158,4 +173,8 @@ footer .pagination {
 .pagination .page-per-total{
     padding: 5px;
     border: solid 1px #000;
+}
+
+.pagination .page-btn{
+    background-color: transparent;
 }

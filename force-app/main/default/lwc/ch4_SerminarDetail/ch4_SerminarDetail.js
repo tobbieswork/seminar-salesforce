@@ -5,6 +5,7 @@ import getRecordDataFromId from '@salesforce/apex/CH4_SerminarController.getReco
 export default class Ch4_SerminarDetail extends LightningElement {
     
     @api serminarId;
+    @api isBookingShown;
     @track serminarInfo;
     @track shownSections;
     @track sections;
@@ -12,7 +13,6 @@ export default class Ch4_SerminarDetail extends LightningElement {
     isShow = false;
     isExpandable = false;
 
-    isBookingShown = false;
     get isSerminarDetailShown(){
         return !this.isBookingShown;
     } 

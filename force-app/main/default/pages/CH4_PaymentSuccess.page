@@ -1,0 +1,60 @@
+<apex:page >
+    <script>
+        // Set the target URL to redirect after the countdown
+        var redirectURL = 'https://furucrm72-dev-ed.develop.lightning.force.com/lightning/n/Booking_Serminar';
+        
+        // Function to start the countdown
+        function startCountdown() {
+            var seconds = 30; // Number of seconds for the countdown
+            
+            // Update the countdown display
+            document.getElementById('countdown').innerHTML = seconds;
+            
+            // Decrement the seconds and redirect after 10 seconds
+            var countdownInterval = setInterval(function() {
+                seconds--;
+                document.getElementById('countdown').innerHTML = seconds;
+                
+                if (seconds === 0) {
+                    clearInterval(countdownInterval);
+                    window.location.href = redirectURL; // Redirect to the specified URL
+                }
+            }, 1000);
+        }
+        
+        // Call the startCountdown function when the page loads
+        //window.onload = startCountdown;
+    </script>
+<html>
+<head>
+    <title>Payment Successful</title>
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-top: 0;
+        }
+        
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        Redirecting to homepage in <span id="countdown">30</span> seconds...
+    </div>
+    <h1>Payment Successful</h1>
+    
+    <p>Thank you for your payment. Your transaction was successful.</p>
+</body>
+</html>
+</apex:page>

@@ -1,4 +1,4 @@
-public class CH4_PayPalAPI {
+public without sharing class CH4_PayPalAPI {
 
     // PayPal API base URL
     private static final String BASE_URL = 'https://api-m.sandbox.paypal.com';
@@ -9,16 +9,19 @@ public class CH4_PayPalAPI {
     // PayPal API endpoint for creating an order
     private static final String CREATE_ORDER_ENDPOINT = BASE_URL + '/v2/checkout/orders';
 
+    // PayPal API endpoint for showing order detail
+    private static final String SHOW_ORDER_DETAIL_ENDPOINT = BASE_URL + '/v2/checkout/orders/';
+
     // PayPal API endpoint for capturing the payment
     private static final String CAPTURE_PAYMENT_ENDPOINT = BASE_URL + '/v2/checkout/orders/';
 
     // PayPal API client credentials
     private static final String PAYPAL_API_CLIENT_ID = 'AXRWjzDtGJ20Ux2zuuwn38V5LFxTOgubfE6wFbrsYmXlgukePZuoSM3FDdxYVCX576r9Qj46EQFRMEWD';
     private static final String PAYPAL_API_CLIENT_SECRET = 'EG5LRXP8t6uSObqqCuxLmhPVdUSPsBHVd3cZCSe-S1bLWoQ0Qs0G_81FoIqaxVShv-3CMd93tc1_pF7_';
-
-    @AuraEnabled
-    public static String getAccessToken() {
-
+    
+    
+    private static String getAccessToken() {
+        
         String clientId = PAYPAL_API_CLIENT_ID;
         String clientSecret = PAYPAL_API_CLIENT_SECRET;
         String credentials = clientId + ':' + clientSecret;
@@ -63,7 +66,8 @@ public class CH4_PayPalAPI {
         }
     }
 
-    public static HttpResponse createOrder() {
+    @AuraEnabled
+    public static String createOrder(String orderBody) {
         String newAccessToken = CH4_PayPalAPI.getAccessToken();
         String authorizationValue = 'Bearer ' + newAccessToken;
         HttpRequest request = new HttpRequest();
@@ -71,16 +75,55 @@ public class CH4_PayPalAPI {
         request.setMethod('POST');
         request.setHeader('Content-Type', 'application/json');
         request.setHeader('Authorization', authorizationValue);
+        request.setBody(orderBody);
 
-        // Set the request body
-        request.setBody('{"intent": "CAPTURE", "purchase_units": [{"amount": {"currency_code": "USD", "value": "10.00"}}]}');
-
-        HttpResponse response = new Http().send(request);
-        return response;
+        
+        try {
+            HttpResponse response = new Http().send(request);
+            Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(String.valueOf(response.getBody()));
+            List<Object> links = (List<Object>)responseMap.get('links');
+            Map<String, Object> payLink = (Map<String, Object>)links[1];
+            String payUrl = (String)payLink.get('href');
+            return payUrl;
+        } catch (Exception e) {
+            System.debug('Has error when create order: ' + e.getMessage());
+            return null;
+        }
     }
 
     @AuraEnabled
-    public static Boolean executePayment(String orderId) {
+    public static String showOrderDetail(String orderId) {
+        String newAccessToken = CH4_PayPalAPI.getAccessToken();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(SHOW_ORDER_DETAIL_ENDPOINT + orderId);
+        request.setMethod('GET');
+        request.setHeader('Authorization', 'Bearer ' + newAccessToken);
+
+        try {
+            // Send the request and get the response
+            HttpResponse response = new Http().send(request);
+            
+            if (response.getStatusCode() == 200) {
+                // Successful response
+                String responseBody = response.getBody();
+                Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(responseBody);
+                Map<String, Object> purchaseUnits = (Map<String, Object>) (((List<Object>)responseMap.get('purchase_units'))[0]);
+                return (String) purchaseUnits.get('reference_id');
+            } else {
+                // Error response
+                String errorMessage = 'API call failed with status code: ' + response.getStatusCode();
+                System.debug(errorMessage);
+                return null;
+            }
+        } catch (Exception e) {
+            // Exception occurred
+            System.debug('Error occurred while making API call: ' + e.getMessage());
+            return null;
+        }
+    }
+
+    @AuraEnabled
+    public static Boolean capturePayment(String orderId) {
         String newAccessToken = CH4_PayPalAPI.getAccessToken();
         HttpRequest request = new HttpRequest();
         request.setEndpoint(CAPTURE_PAYMENT_ENDPOINT + orderId + '/capture');
@@ -93,7 +136,7 @@ public class CH4_PayPalAPI {
             return true;
         } else {
             throw new AuraHandledException('Failed to execute PayPal payment: ' + response.getBody());
+            return false;
         }
     }
-    
 }
