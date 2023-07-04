@@ -24,11 +24,13 @@ public without sharing class CH4_BookingController {
     }
     @AuraENabled
     public static Decimal validateVoucher(String voucher) {
+        if(voucher == ''){
+            return 0;
+        }
         Date today = Date.today();
         try {
             return [SELECT Discount__c FROM Promotion_Code__c WHERE Start_Date__c <= :today AND End_Date__c >= :today AND Code__c =: voucher].Discount__c;
         } catch (QueryException ex) {
-            // Handle the query exception
             return null;
         }
     }
@@ -38,10 +40,10 @@ public without sharing class CH4_BookingController {
         booking.Status__c = 'Done';
         try {
             update booking;
-            return true;
         } catch (Exception e) {
             System.debug('Can not update booking ' + e.getMessage());
             return false;
         }
+        return true;
     }
 }

@@ -1,7 +1,7 @@
-<apex:page >
+<apex:page showHeader="false">
     <script>
         // Set the target URL to redirect after the countdown
-        var redirectURL = 'https://furucrm72-dev-ed.develop.lightning.force.com/lightning/n/Booking_Serminar';
+        var redirectURL = 'https://furucrm72-dev-ed.develop.my.site.com/BookingSerminar';
         
         // Function to start the countdown
         function startCountdown() {
@@ -23,7 +23,7 @@
         }
         
         // Call the startCountdown function when the page loads
-        //window.onload = startCountdown;
+        window.onload = startCountdown;
     </script>
 <html>
 <head>

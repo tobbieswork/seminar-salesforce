@@ -1,4 +1,4 @@
-public with sharing class CH1_BookingTriggerHandler {
+public without sharing class CH1_BookingTriggerHandler {
     public static void validateBookingInsertion(List<Booking__c> bookingList) {
         
         //Store serminar ID in list to reuse for looping and query

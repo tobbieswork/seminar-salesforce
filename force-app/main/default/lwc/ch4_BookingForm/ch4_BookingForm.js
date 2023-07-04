@@ -2,6 +2,7 @@ import { LightningElement, track, api } from 'lwc';
 import insertBooking from '@salesforce/apex/CH4_BookingController.insertBooking';
 import validateVoucher from '@salesforce/apex/CH4_BookingController.validateVoucher';
 import updateBookingToDone from '@salesforce/apex/CH4_BookingController.updateBookingToDone';
+import createPaymentForBooking from '@salesforce/apex/CH4_PaymentController.createPaymentForBooking';
 import createOrder from '@salesforce/apex/CH4_PayPalAPI.createOrder';
 export default class Ch4_BookingForm extends LightningElement {
     
@@ -10,6 +11,9 @@ export default class Ch4_BookingForm extends LightningElement {
     @api name;
     @api description;
     @api price;
+    
+    @track isRegisting = false;
+    @track selectedDateFormatted;
 
     contactName;
     contactEmail;
@@ -21,34 +25,14 @@ export default class Ch4_BookingForm extends LightningElement {
 
     showValidVoucherMessage = false;
     showInvalidVoucherMessage = false;
-
-    @track isRegisting = false;
-    @track selectedDateFormatted;
-
+    
     isVoucherApplied(){
         return this.showValidVoucherMessage;
     }
 
-    formatDate(dateValue) {
-        const date = new Date(dateValue);
-        const year = date.getFullYear();
-        const month = ('0' + (date.getMonth() + 1)).slice(-2);
-        const day = ('0' + date.getDate()).slice(-2);
-        return `${year}/${month}/${day}`;
-    }
 
     handleDateChange(event) {
         this.selectedDateFormatted = event.target.value;
-        // this.selectedDateFormatted = this.formatDate(this.selectedDate);
-    }
-
-    convertVndToUsd(vndAmount) {
-        // Assuming 1 USD = 23000 VND
-        const exchangeRate = 23000;
-        const usdAmount = vndAmount / exchangeRate;
-        const roundedUsdAmount = Math.round(usdAmount * 100) / 100; // Round to 2 decimal places
-
-        return roundedUsdAmount;
     }
 
     createOrderBody(bookingId, amount){
@@ -84,104 +68,70 @@ export default class Ch4_BookingForm extends LightningElement {
     }
 
     handleRegister(event){
+        let finalPrice;
         event.preventDefault();
         this.isRegisting = true;
-
-        if(this.voucher === ''){
-            insertBooking({
-                id: this.idser,
-                name: this.contactName, 
-                email: this.contactEmail, 
-                phone: this.contactPhone, 
-                birthdate: this.contactBirthdate, 
-                voucher: this.voucher, 
-                serName: this.name,
-                price: String(this.price)
-            })
-            .then(result => {
-                if(this.price){
-                    const body = this.createOrderBody(String(result) ,String(this.price));
-                    createOrder({
-                        orderBody: body
-                    }).then((link) => {
-                        console.log(link);
-                        window.location.href = link;
-                    })
-                }else{
-                    updateBookingToDone({
-                        bookingId: result
-                    }).then((result)=>{
-                        console.log(result);
-                    }).then(()=>{
-                        this.handleBackHomepage();
-                    })
-                }
-            })
-            .catch(error => {
+        
+        validateVoucher({
+            voucher: this.voucher
+        }).then(percent => {
+            if(percent === 0){
+                finalPrice = this.price;
+            }else if(percent == null){
+                this.showValidVoucherMessage = false;
+                this.showInvalidVoucherMessage = true;
+                this.voucherDiscount = null;
+                this.discountPrice = null;
                 this.isRegisting = false;
-                console.log(error);
-            })
-        }else{
-            validateVoucher({
-                voucher: this.voucher
-            })
-            .then(result => {
-                if(result !== null){
-                    this.showValidVoucherMessage = true;
-                    this.showInvalidVoucherMessage = false;
-                    this.voucherDiscount = result;
-                    this.discountPrice = Math.round(this.price * (100 - result) / 100);
-                }else{
-                    this.showValidVoucherMessage = false;
-                    this.showInvalidVoucherMessage = true;
-                    this.voucherDiscount = null;
-                    this.discountPrice = null;
+            }else{
+                this.showValidVoucherMessage = true;
+                this.showInvalidVoucherMessage = false;
+                this.voucherDiscount = percent;
+                this.discountPrice = Math.round(this.price * (100 - percent) / 100);
+                finalPrice = this.discountPrice;
+            }
+        }).then(() => {
+            if(this.isRegisting){
+                insertBooking({
+                    id: this.idser,
+                    name: this.contactName, 
+                    email: this.contactEmail, 
+                    phone: this.contactPhone, 
+                    birthdate: this.contactBirthdate, 
+                    voucher: this.voucher, 
+                    serName: this.name,
+                    price: String(finalPrice)
+                }).then(bkId => {
+                    if(finalPrice){
+                        const body = this.createOrderBody(String(bkId) ,String(finalPrice));
+                        createOrder({
+                            orderBody: body
+                        }).then((orderLink) => {
+                            window.location.href = orderLink;
+                        }).catch(error => {
+                            console.log(error);
+                        })
+                    }else{
+                        updateBookingToDone({
+                            bookingId: bkId
+                        }).then(()=>{
+                            this.handleBackHomepage();
+                        })
+                        createPaymentForBooking({
+                            bookingId: bkId,
+                            bookingPrice: String(finalPrice)
+                        })
+
+                    }
+                })
+                .catch(error => {
                     this.isRegisting = false;
-                }
-            })
-            .then(() => {
-                if(this.voucherDiscount){
-                    insertBooking({
-                        id: this.idser,
-                        name: this.contactName, 
-                        email: this.contactEmail, 
-                        phone: this.contactPhone, 
-                        birthdate: this.contactBirthdate, 
-                        voucher: this.voucher, 
-                        serName: this.name,
-                        price: String(this.discountPrice)
-                    })
-                    .then(result => {
-
-                        if(this.discountPrice){
-                            const body = this.createOrderBody(String(result) ,String(this.discountPrice));
-                            createOrder({
-                                orderBody: body
-                            }).then((orderLink) => {
-                                console.log(orderLink);
-                                window.location.href = orderLink;
-                            }).catch(error => {
-                                console.log(error);
-                            })
-                        }else{
-                            updateBookingToDone({
-                                bookingId: result
-                            }).then((result)=>{
-                                console.log(result);
-                            }).then(()=>{
-                                this.handleBackHomepage();
-                            })
-                        }
-                    })
-                    .catch(error => {
-                        this.isRegisting = false;
-                        console.log(error);
-                    })
-                }
-    
-            })
-        }
-
+                    console.log(error);
+                })
+            }
+        }).catch(error => {
+            console.log(error);
+        })
     }
     handleChangeName(event){
         this.contactName = event.target.value;

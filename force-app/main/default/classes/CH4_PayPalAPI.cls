@@ -136,7 +136,6 @@ public without sharing class CH4_PayPalAPI {
             return true;
         } else {
             throw new AuraHandledException('Failed to execute PayPal payment: ' + response.getBody());
-            return false;
         }
     }
 }

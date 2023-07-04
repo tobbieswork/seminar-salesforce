@@ -112,6 +112,7 @@ export default class Ch4_AllSerminar extends LightningElement {
     showAllSerminar(){
         this.isAllSerminarShown = true;
         this.isSerminarDetailShown = false;
+        this.resetFilter();
     }
 
     findSerminar(){

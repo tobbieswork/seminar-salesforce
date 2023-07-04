@@ -1,4 +1,4 @@
-public with sharing class CH4_SendContactCardController {
+public without sharing class CH4_SendContactCardController {
     @future(callout=true)
     public static void sendContactCard(String contactCardId, String contactEmail) {
 

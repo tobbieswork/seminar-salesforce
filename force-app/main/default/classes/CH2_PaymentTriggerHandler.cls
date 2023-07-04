@@ -1,4 +1,4 @@
-public with sharing class CH2_PaymentTriggerHandler {
+public without sharing class CH2_PaymentTriggerHandler {
     public static void checkPaymentPrice(List<Payment__c> payments){
         
         //GET Bookings ID from all Payments

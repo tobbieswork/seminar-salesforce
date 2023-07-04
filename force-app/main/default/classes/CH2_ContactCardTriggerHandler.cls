@@ -1,4 +1,4 @@
-public class CH2_ContactCardTriggerHandler {
+public without sharing class CH2_ContactCardTriggerHandler {
 	public static void configCardNumber(Map<Id, Contact_Card__c> ctcards){
         
         Integer nextIndex = 1;
@@ -6,7 +6,7 @@ public class CH2_ContactCardTriggerHandler {
         List<Contact_Card__c> ctcardsListUpdate = new List<Contact_Card__c>();
         
         List<Contact_Card__c> listCtCard = [
-            SELECT Name, Card_Number__c, Contact__r.Email, Serminar__r.Code__c, Serminar__r.Start_Date__c 
+            SELECT Name, Card_Number__c, Contact__r.Email, Contact__r.Name, Serminar__r.Code__c, Serminar__r.Start_Date__c 
             FROM Contact_Card__c 
             WHERE Id IN : ctcards.keySet()
         ];
@@ -37,10 +37,9 @@ public class CH2_ContactCardTriggerHandler {
             ctcardsListUpdate.add(ctcard);
             nextIndex++;
         }
-        // Contact_Card__c contactCard = ctcardsListUpdate[0];
         try {
             for (Contact_Card__c ctc : ctcardsListUpdate) {
-                sendContactCard(ctc.Id, ctc.Contact__r.Email);
+                sendContactCard(ctc.Id, ctc.Contact__r.Email, ctc.Contact__r.Name);
                 update ctcardsListUpdate;
             }
         } catch (Exception e) {
@@ -49,14 +48,14 @@ public class CH2_ContactCardTriggerHandler {
     }
 
     @future(callout=true)
-    public static void sendContactCard(String contactCardId, String contactEmail) {
+    public static void sendContactCard(String contactCardId, String contactEmail, String contactName) {
 
         Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
 
         email.setToAddresses(new List<String>{ contactEmail });
-
-        email.setSubject('My Email Subject');
-        email.setHtmlBody('Hello, Please find the attached Visualforce page.');
+        email.setOrgWideEmailAddressId('0D25i000000CcEUCA0');
+        email.setSubject('Hello ' + contactName + ', welcome to furuCRM');
+        email.setHtmlBody('Dear Recipient\'s Name,\nThank you for your recent request. We have prepared a PDF file containing the details of your information. Please review the PDF attached to this email and confirm that all the information is accurate.\nIf you have any updates or changes, kindly let us know by replying to this email or contacting our customer support team. Your feedback is important to us.\nAttached is the PDF file: ContactCard.pdf\nWe appreciate your prompt attention to this matter. Thank you for choosing our services.\nBest regards,\nDang Phat\nfuruCRM');
 
         PageReference pageRef = Page.CH2_ContactCardCreatePage;
         pageRef.getParameters().put('id', contactCardId);

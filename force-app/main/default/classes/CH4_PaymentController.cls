@@ -1,21 +1,16 @@
-public with sharing class CH4_PaymentController {
-    public static HttpResponse makeGetCallout() {
-        Http http = new Http();
-        HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://th-apex-http-callout.herokuapp.com/animals');
-        request.setMethod('GET');
-        HttpResponse response = http.send(request);
-        // If the request is successful, parse the JSON response.
-        if(response.getStatusCode() == 200) {
-            // Deserializes the JSON string into collections of primitive data types.
-            Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
-            // Cast the values in the 'animals' key as a list
-            List<Object> animals = (List<Object>) results.get('animals');
-            System.debug('Received the following animals:');
-            for(Object animal: animals) {
-                System.debug(animal);
-            }
+public without sharing class CH4_PaymentController {
+    @AuraEnabled
+    public static Boolean createPaymentForBooking(String bookingId, String bookingPrice) {
+        Payment__c payment = new Payment__c();
+        payment.Booking__c = bookingId;
+        payment.Price__c = Decimal.valueOf(bookingPrice);
+        payment.Payment_Date__c = Datetime.now();
+        try {
+            insert payment;
+        } catch (Exception e) {
+            System.debug('Insert payment has an error: ' + e.getMessage());
+            return false;
         }
-        return response;
+        return true;
     }
 }

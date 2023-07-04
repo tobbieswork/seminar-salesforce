@@ -16,8 +16,8 @@ public without sharing class CH4_SerminarController {
         toPrice = toPrice != null ? toPrice : '';
 
         String optionalFilter = '';
-        optionalFilter = fromDate == '' ? optionalFilter : optionalFilter + ' AND Start_Date__c>=' + fromDate;
-        optionalFilter = toDate == '' ? optionalFilter : optionalFilter + ' AND Start_Date__c<='  + toDate;
+        optionalFilter = fromDate == '' ? optionalFilter : optionalFilter + ' AND Start_Date__c>' + fromDate;
+        optionalFilter = toDate == '' ? optionalFilter : optionalFilter + ' AND End_Date__c<'  + toDate;
         optionalFilter = fromPrice == '' ? optionalFilter : optionalFilter + ' AND Price__c>='  + fromPrice;
         optionalFilter = toPrice == '' ? optionalFilter : optionalFilter + ' AND  Price__c<='  + toPrice;
             
