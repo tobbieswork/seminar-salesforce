@@ -1,0 +1,88 @@
+<template>
+
+    <div id="paypal-button-container"></div>
+
+    <div class="slds-card container">
+        <div class="register-form">
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">
+                  <abbr class="slds-required" title="required">* </abbr>Name</label>
+                <lightning-input onblur={handleChangeName} class="input-field" type="text" label="Enter some text" variant="label-hidden" placeholder="Please input your name…" required></lightning-input>
+            </div>
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">
+                    <abbr class="slds-required" title="required">* </abbr>Email</label>
+                <lightning-input 
+                    class="input-field" 
+                    maxlength="50"
+                    message-when-too-long="Your email address must not be more than 50 characters."
+                    minlength="5"
+                    message-when-too-short="Your email address must be more 5 characters."
+                    onblur={handleChangeEmail} 
+                    type="email" 
+                    variant="label-hidden" 
+                    label="Email address" 
+                    placeholder="Please input your email…" 
+                    pattern=".+@gmail.com"
+                    required>
+                </lightning-input>
+            </div>
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">Phone</label>
+                <div class="input-field slds-form-element__control">
+                  <input onchange={handleChangePhone} type="text" placeholder="Please input your phone number…" class="slds-input" />
+                </div>
+            </div>
+            <div>
+                <label class="label slds-form-element__label">Birthdate</label>
+                <lightning-input 
+                    class="sort-input" 
+                    onchange={handleDateChange} 
+                    onblur={handleChangeBorn} 
+                    type="date" 
+                    label="Select Date" 
+                    variant="label-hidden" 
+                    value={selectedDateFormatted} 
+                    placeholder="YYYY/MM/DD"
+                ></lightning-input>
+            </div>
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">Voucher</label>
+                <div class="slds-form-element__control">
+                    <input
+                        class="slds-input sort-input" 
+                        onchange={handleChangeVoucher} 
+                        type="text" placeholder="" 
+                    />
+                </div>
+            </div>
+            <lightning-input onchange={handleChangeAgree} type="checkbox" label="I agree with the term and policy to register this serminar" name="agreement" required></lightning-input>
+            <div class="button-group">
+                <button onclick={handleBackHomepage} 
+                        class="slds-button slds-button_neutral" 
+                        type="button">
+                        Cancel
+                </button>
+                <button onclick={handleRegister}
+                        disabled={isValidated}
+                        class="slds-button slds-button_brand" 
+                        type="button">
+                        Register
+                </button>
+            </div>
+        </div>
+        <div class="serminar">
+            <template lwc:if={img}>
+                <img class="serminar-img" src={img} alt="">
+            </template>
+            <template lwc:else>
+                <img class="serminar-img" src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg" alt="">
+            </template>
+            <div class="serminar-info">
+                <h1 class="serminar-info--name slds-text-title">{name}</h1>
+                <p class="serminar-info--description slds-text-body_regular"><lightning-formatted-rich-text class="slds-text-heading_small" value={description}></lightning-formatted-rich-text></p>
+                <h2 class="serminar-info--price slds-text-heading_medium"><lightning-formatted-number value={price}></lightning-formatted-number>đ</h2>
+            </div>
+        </div>
+    </div>
+</template>

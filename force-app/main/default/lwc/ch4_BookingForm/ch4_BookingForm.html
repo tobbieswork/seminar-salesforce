@@ -1,0 +1,117 @@
+<template>
+    <div class="slds-card container">
+        <form class="register-form" onsubmit={handleRegister}>
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">
+                  <abbr class="slds-required" title="required">* </abbr>Name</label>
+                <lightning-input onblur={handleChangeName} class="input-field" type="text" label="Enter some text" variant="label-hidden" placeholder="Please input your name…" maxlength="32" pattern="[^0-9]*" required></lightning-input>
+            </div>
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">
+                    <abbr class="slds-required" title="required">* </abbr>Email</label>
+                <lightning-input 
+                    class="input-field" 
+                    maxlength="50"
+                    message-when-too-long="Your email address must not be more than 50 characters."
+                    minlength="5"
+                    message-when-too-short="Your email address must be more 5 characters."
+                    onblur={handleChangeEmail} 
+                    type="email" 
+                    variant="label-hidden" 
+                    label="Email address" 
+                    placeholder="Please input your email…" 
+                    pattern="[^@\s]+@[^@\s]+"
+                    required>
+                </lightning-input>
+            </div>
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">Phone</label>
+                <div class="input-field slds-form-element__control">
+                  <input onchange={handleChangePhone} type="text" placeholder="Please input your phone number…" class="slds-input" />
+                </div>
+            </div>
+            <div>
+                <label class="label slds-form-element__label">Birthdate</label>
+                <lightning-input 
+                    class="sort-input" 
+                    onchange={handleDateChange} 
+                    onblur={handleChangeBorn} 
+                    type="date" 
+                    label="Select Date" 
+                    variant="label-hidden" 
+                    value={selectedDateFormatted} 
+                    placeholder="YYYY/MM/DD"
+                ></lightning-input>
+            </div>
+            <div class="slds-form-element">
+                <label class="label slds-form-element__label">Voucher</label>
+                <div class="voucher-input slds-form-element__control">
+                    <input
+                        class="slds-input sort-input" 
+                        oninput={handleChangeVoucher}
+                        type="text" placeholder="" 
+                    />
+                    <div class="result">
+                        <template if:true={showValidVoucherMessage}>
+                            <p class="success">
+                                Congratulations! You've got a voucher! Saving {voucherDiscount}% ✔️
+                            </p>
+                        </template>
+                        <template if:true={showInvalidVoucherMessage}>
+                            <p class="fail">
+                                Voucher is not valid! ❌
+                            </p>
+                        </template>
+                    </div>
+                </div>
+                <button
+                    onclick={handleVerifyVoucher}
+                    class="verify-btn"
+                    id="verify-btn"
+                    type="button">
+                    Verify
+                </button>
+                
+            </div>
+
+            <div>
+                <lightning-input onchange={handleChangeAgree} type="checkbox" label="I agree with the term and policy to register this serminar" name="agreement" required></lightning-input>
+            </div>
+            <div class="button-group">
+                <button onclick={handleBackHomepage} 
+                        class="slds-button slds-button_neutral" 
+                        type="button">
+                        Cancel
+                </button>
+                <button 
+                        
+                        disabled={isRegisting}
+                        class="slds-button slds-button_brand" 
+                        type="submit">
+                        Register
+                </button>
+            </div>
+        </form>
+        <div class="serminar">
+            <template lwc:if={img}>
+                <img class="serminar-img" src={img} alt="">
+            </template>
+            <template lwc:else>
+                <img class="serminar-img" src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg" alt="">
+            </template>
+            <div class="serminar-info">
+                <h1 class="serminar-info--name slds-text-title">{name}</h1>
+                <p class="serminar-info--description slds-text-body_regular"><lightning-formatted-rich-text class="slds-text-heading_small" value={description}></lightning-formatted-rich-text></p>
+                <div class="price-container">
+                    <template lwc:if={discountPrice}>
+                        <p class="serminar-info--old-price slds-text-heading_medium"><lightning-formatted-number value={price}></lightning-formatted-number>$</p>
+                        <h2 class="serminar-info--price slds-text-heading_medium"><lightning-formatted-number value={discountPrice}></lightning-formatted-number>$</h2>
+                    </template>
+                    <template lwc:else>
+                        <h2 class="serminar-info--price slds-text-heading_medium"><lightning-formatted-number value={price}></lightning-formatted-number>$</h2>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

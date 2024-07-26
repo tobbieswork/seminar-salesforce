@@ -1,0 +1,141 @@
+<template>
+    <template if:true={isAllSerminarShown}>
+        <div class="container">
+            <div class="search-bar">
+                <form name="searchForm" id="searchForm" onsubmit={handleSubmit}>
+                    <input type="text" value={searchValue} onchange={handleChangeSearchValue} onkeypress={handleOnEnter} name="search" id="search-field" placeholder="Search...">
+                    
+                        <div class="search-filter">
+                        <p class="slds-text-heading_small"><b>Period</b></p>
+                        <div class="filter-field filter-date">
+                            <label for="date-from">From date</label>
+                            <lightning-input class="filter-input" onchange={handleChangeDateFrom} value={dateRangeFrom} type="date" name="date-from" variant="label-hidden" placeholder="input date..."></lightning-input>
+                            <label for="date-to">To date</label>
+                            <lightning-input class="filter-input" onchange={handleChangeDateTo} value={dateRangeTo} type="date" name="date-to" variant="label-hidden" placeholder="input date..."></lightning-input>
+                        </div>
+                        <p class="slds-text-heading_small"><b>Price</b></p>
+                        <div class="filter-field filter-price">
+                            <label for="price-from">From price</label>
+                            <lightning-input class="filter-input slds-text-align_center" onchange={handleChangePriceFrom} value={priceRangeFrom} type="number" name="price-from" variant="label-hidden" placeholder="input price..."></lightning-input>
+                            <label for="price-to">To price</label>
+                            <lightning-input class="filter-input" onchange={handleChangePriceTo} value={priceRangeTo} type="number" name="price-to" variant="label-hidden" placeholder="input price..."></lightning-input>
+                        </div>
+                        <div class="filter-btn">
+                            <button onclick={handleClearFilter} class="slds-button slds-button_neutral" aria-disabled="false" title="Non-primary action" type="button">Clear search</button>
+                            <button onclick={handleSearch} disabled={isSearching} class="slds-button slds-button_brand" aria-disabled="false" title="Primary action" type="button">Search</button>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    
+                    <div class="search-option">
+    
+                        <div class="option-container pagination">
+                            <lightning-combobox
+                                class="pagination-options"
+                                name="pagination"
+                                variant="label-hidden"
+                                value={pageSize}
+                                placeholder="Page Size"
+                                options={pageSizeOptions}
+                                onchange={handleChangePageSize} >
+                            </lightning-combobox>
+                        </div>
+    
+                        <div class="option-container sort">
+                            <h3 class="slds-text-heading_small">Sort</h3>
+        
+                            <input name="orderSort" id="asc" type="radio" value="ASC" onchange={handleChangeOrder} checked>
+                            <label for="asc">ASC</label>
+                            <input name="orderSort" id="desc" type="radio" value="DESC" onchange={handleChangeOrder}>
+                            <label for="asc">DESC</label>
+        
+                            <lightning-combobox
+                                style="margin: 0;"
+                                class="field-options"
+                                name="fields"
+                                variant="label-hidden"
+                                value={sortField}
+                                placeholder="Select Field"
+                                options={fieldOptions}
+                                onchange={handleChangeField} >
+                            </lightning-combobox>
+                        </div>
+    
+                    </div>
+                </form>
+            </div>
+            <div class="search-result">
+                <template lwc:if={serminars}>
+                    <template for:each={serminars} for:item="serminar">
+                        <div key={serminar.id} class="search__item">
+                            <div class="img__container">
+                                <template lwc:if={serminar.Image__c}>
+                                    <img src={serminar.Image__c} alt="serminar image">
+                                </template>
+                                <template lwc:else>
+                                    <img src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg" alt="serminar image">
+                                </template>
+                            </div>
+                            <div class="serminar__container">
+                                <h1 data-record-id={serminar.Id} onclick={handleShowDetail} class="serminar__name slds-text-heading_large">{serminar.Name}</h1>
+                                <p class="serminar__description"><lightning-formatted-rich-text class="slds-text-heading_small" value={serminar.Description__c}></lightning-formatted-rich-text></p>
+                                <div class="info-container">
+
+                                    <p class="serminar__period">Period: <span style="font-weight: normal;">{serminar.Start_Date__c} to {serminar.End_Date__c}</span></p>
+                                    <template lwc:if={serminar.Booking_Done_Quantity__c}>
+                                        <template lwc:if={serminar.Quantity__c}>
+                                            <p>Quantity: <span style="color: red;">{serminar.Booking_Done_Quantity__c}/{serminar.Quantity__c}</span></p>
+                                        </template>
+                                        <template lwc:else>
+                                            <p>Quantity: <span style="color: red;">{serminar.Booking_Done_Quantity__c}/<span style="font-size: 22px;position: relative;bottom: -1px;">&#8734;</span></span></p>
+                                        </template>
+                                    </template>
+                                    <template lwc:else>
+                                        <template lwc:if={serminar.Quantity__c}>
+                                            <p>Quantity: <span style="color: red;">0/{serminar.Quantity__c}</span></p>
+                                        </template>
+                                        <template lwc:else>
+                                            <p>Quantity: <span style="color: red;">0/<span style="font-size: 22px;position: relative;bottom: -1px;">&#8734;</span></span></p>
+                                        </template>
+                                    </template>
+                                    <button data-record-id={serminar.Id} onclick={handleShowBooking} class="serminar__register slds-button slds-button_brand">Register</button>
+                                </div>
+                                <!-- <template lwc:if={seminar.Booking__r}>
+                                    <p class="serminar__quantity">Quantity: seminar.Booking__r.length/10</p>
+                                </template> -->
+                                <!-- <template if:false={seminar.Booking__c}>
+                                    <p class="serminar__quantity">Quantity: 0/10</p>
+                                </template> -->
+                                <!-- <p data-record-id={serminar.Id} onclick={handleShowDetail} class="serminar__link">Detail</p> -->
+                                <template lwc:if={serminar.Price__c}>
+                                    <p class="serminar__price"><lightning-formatted-number value={serminar.Price__c}></lightning-formatted-number>$</p>
+                                </template>
+                                <template lwc:else>
+                                    <p class="serminar__price" >✨FREE✨</p>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+            <footer>
+                <div class="pagination">
+                    <button disabled={isFirstDisable} class="page-btn" onclick={handleFirstPage}>First</button>
+                    <button disabled={isFirstDisable} class="page-btn" onclick={handlePreviousPage}>Previous</button>
+                    <div class="page-per-total"> {currentPage} / {totalPage}</div>
+                    <button disabled={isLastDisable} class="page-btn" onclick={handleNextPage}>Next</button>
+                    <button disabled={isLastDisable} class="page-btn" onclick={handleLastPage}>Last</button>
+                </div>
+            </footer>
+        </div>  
+    </template>
+    <template if:true={isSerminarDetailShown}>
+        <c-ch4_-serminar-detail
+            is-booking-shown={bookingTab}
+            serminar-id={detailId}
+            onback={handleShowAllSeminar}
+        ></c-ch4_-serminar-detail>
+    </template>
+</template>

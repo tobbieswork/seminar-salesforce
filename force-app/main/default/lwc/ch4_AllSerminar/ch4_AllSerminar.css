@@ -1,0 +1,180 @@
+.container{
+    position: relative;
+    width: 100%;
+    padding: 40px 18%;
+    background-color: #C4DFDF;
+}
+
+.search-bar{
+    background-color: #ffffff;
+    padding: 30px 50px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.search-bar form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.search-bar input[name="search"]{
+    height: 44px;
+    width: 100%;
+    text-align: center;
+    border-radius: 30px;
+    border: solid 1px #000;
+    margin-bottom: 20px;
+}
+
+.search-bar .search-filter {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+.search-filter .filter-field{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px;
+}
+
+.filter-field label {
+    min-width: 70px;
+    padding-left: 30px;
+}
+
+.filter-input{
+    margin: 10px;
+    flex-grow: 1;
+}
+
+.search-filter .filter-btn{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.filter-btn button{
+    width: 110px;
+    padding: 2px 0;
+    margin: 0 10px;
+}
+
+.search-bar .search-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-option .option-container{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-result{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.search-result .search__item{
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 270px;
+}
+
+.search__item .img__container {
+    width: 300px;
+    background-color: #fff;
+}
+
+.img__container > img {
+    min-width: 300px;
+    height: 100%;
+    object-fit: cover;
+}
+
+.serminar__container {
+    position: relative;
+    flex-grow: 1;
+    padding: 24px;
+    background-color: rgb(239 239 239);
+}
+
+.serminar__name{
+    display: inline-block;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.serminar__container > .serminar__description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.serminar__period{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.serminar__register{
+    margin-top: 8px;
+    padding: 2px 20px;
+}
+.info-container{
+    margin-top: 20px;
+    position: absolute;
+    bottom: 12px;
+    
+}
+
+.serminar__link:hover{
+    color: #fff;
+    text-decoration: none;
+}
+
+.serminar__price{
+    position: absolute;
+    bottom: 12px;
+    right: 20px;
+    font-weight: bold;
+    font-size: 30px;
+    color: darkcyan;
+}
+
+footer {
+    /* position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); */
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+footer .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 500px;
+    padding: 10px;
+    background-color: #C4DFDF;
+}
+
+.pagination .page-per-total{
+    padding: 5px;
+    border: solid 1px #000;
+}
+
+.pagination .page-btn{
+    background-color: transparent;
+}
