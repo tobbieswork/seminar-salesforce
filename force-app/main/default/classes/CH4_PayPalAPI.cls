@@ -16,8 +16,8 @@ public without sharing class CH4_PayPalAPI {
     private static final String CAPTURE_PAYMENT_ENDPOINT = BASE_URL + '/v2/checkout/orders/';
 
     // PayPal API client credentials
-    private static final String PAYPAL_API_CLIENT_ID = 'AXRWjzDtGJ20Ux2zuuwn38V5LFxTOgubfE6wFbrsYmXlgukePZuoSM3FDdxYVCX576r9Qj46EQFRMEWD';
-    private static final String PAYPAL_API_CLIENT_SECRET = 'EG5LRXP8t6uSObqqCuxLmhPVdUSPsBHVd3cZCSe-S1bLWoQ0Qs0G_81FoIqaxVShv-3CMd93tc1_pF7_';
+    private static final String PAYPAL_API_CLIENT_ID = 'example-key';
+    private static final String PAYPAL_API_CLIENT_SECRET = 'example-key';
     
     
     private static String getAccessToken() {
